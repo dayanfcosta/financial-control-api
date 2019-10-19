@@ -42,6 +42,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -73,11 +77,73 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>prod</id>
+      <properties>
+        <activatedProperties>prod</activatedProperties>
+      </properties>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+    </profile>
+
+    <profile>
+      <id>dev</id>
+      <properties>
+        <activatedProperties>dev</activatedProperties>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <profiles>
+            <profile>prod</profile>
+            <profile>dev</profile>
+          </profiles>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>1.6.1</version>
+        <configuration>
+          <from>
+            <image>openjdk:11.0.4-jre-slim</image>
+          </from>
+          <to>
+            <image>com.dayanfcosta.financialcontrol/${project.artifactId}:latest</image>
+            <tags>
+              <tag>${project.version}</tag>
+            </tags>
+          </to>
+          <container>
+            <jvmFlags>
+              <jvmFlag>-server</jvmFlag>
+            </jvmFlags>
+            <ports>
+              <port>8888</port>
+            </ports>
+          </container>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-docker-image</id>
+            <phase>package</phase>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

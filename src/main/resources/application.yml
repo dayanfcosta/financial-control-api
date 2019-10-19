@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: financial-control
+  data:
+    mongodb:
+      database: financial-control
+      host: localhost
+      port: 27017
+  main:
+    banner-mode: off
+server:
+  port: 8888

@@ -10,3 +10,7 @@ spring:
     banner-mode: off
 server:
   port: 8888
+logging:
+  level:
+    root: INFO
+    org.springframework.data.mongodb: DEBUG

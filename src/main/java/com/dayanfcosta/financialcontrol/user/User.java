@@ -67,12 +67,12 @@ public class User extends AbstractDocument {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("User{");
-    sb.append("name='").append(name).append('\'');
-    sb.append(", enabled=").append(enabled);
-    sb.append(", email='").append(email).append('\'');
-    sb.append('}');
-    return sb.toString();
+    final StringBuilder builder = new StringBuilder("User{");
+    builder.append("name='").append(name).append('\'');
+    builder.append(", enabled=").append(enabled);
+    builder.append(", email='").append(email).append('\'');
+    builder.append('}');
+    return builder.toString();
   }
 
 }

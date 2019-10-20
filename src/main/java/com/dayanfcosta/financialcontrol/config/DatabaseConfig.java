@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class DatabaseConfig {
 
   @Bean
-  @Primary
   MongoTemplate mongoTemplate(MongoDbFactory dbFactory) {
     var template = new MongoTemplate(dbFactory);
     template.setWriteConcernResolver(writeConcernResolver());
@@ -26,7 +25,6 @@ public class DatabaseConfig {
   }
 
   @Bean
-  @Primary
   MongoTransactionManager transactionManager(MongoDbFactory dbFactory) {
     return new MongoTransactionManager(dbFactory);
   }

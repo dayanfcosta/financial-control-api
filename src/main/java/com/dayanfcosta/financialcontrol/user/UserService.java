@@ -54,7 +54,7 @@ public class UserService {
     return UserBuilder.create(dto.getEmail())
         .password(user.getPassword())
         .enabled(user.isEnabled())
-        .id(user.getId().get())
+        .id(user.getId())
         .name(dto.getName())
         .build();
   }

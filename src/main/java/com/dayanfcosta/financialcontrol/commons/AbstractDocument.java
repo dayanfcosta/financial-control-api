@@ -1,24 +1,27 @@
 package com.dayanfcosta.financialcontrol.commons;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Optional;
 
 /**
  * Base document
+ *
  * @author dayanfcosta
  */
 public abstract class AbstractDocument {
 
   @Id
-  private final String id;
+  private String id;
 
+  @PersistenceConstructor
   public AbstractDocument(String id) {
     this.id = id;
   }
 
-  public Optional<String> getId() {
-    return Optional.ofNullable(id);
+  public String getId() {
+    return id;
   }
 
   @Override

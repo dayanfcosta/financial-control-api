@@ -31,7 +31,7 @@ class UserDto {
   }
 
   public UserDto(User user) {
-    this(user.getId().get(), user.getName(), user.getEmail(), user.getPassword());
+    this(user.getId(), user.getName(), user.getEmail(), user.getPassword());
   }
 
   public String getId() {

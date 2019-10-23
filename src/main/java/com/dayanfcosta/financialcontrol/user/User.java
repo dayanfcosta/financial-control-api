@@ -55,7 +55,6 @@ public class User extends AbstractDocument {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
     User user = (User) o;
     return email.equals(user.email);
   }

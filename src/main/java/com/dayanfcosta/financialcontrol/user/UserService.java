@@ -34,7 +34,7 @@ public class UserService {
   @Transactional
   public void update(String id, UserDto dto) {
     var user = repository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Doesn't exist a user with the specified id"));
+        .orElseThrow(() -> new IllegalArgumentException("There isn't any user with the specified id"));
     validateUpdate(user, dto);
     var updated = updatedUser(user, dto);
     repository.save(updated);

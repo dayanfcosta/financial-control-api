@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 class UserRepository extends AbstractRepository<User> {
 
-  protected UserRepository(MongoTemplate template) {
+  UserRepository(MongoTemplate template) {
     super(template, User.class);
   }
 

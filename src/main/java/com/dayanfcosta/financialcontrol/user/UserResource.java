@@ -1,5 +1,6 @@
 package com.dayanfcosta.financialcontrol.user;
 
+import com.dayanfcosta.financialcontrol.commons.ResourceUtils;
 import com.dayanfcosta.financialcontrol.commons.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.data.domain.Page;
@@ -43,16 +44,14 @@ public class UserResource {
   @PostMapping
   public ResponseEntity<UserDto> save(@RequestBody UserDto dto) throws URISyntaxException {
     var user = service.save(dto);
-    return ResponseEntity.created(uri(user)).body(new UserDto(user));
+    return ResponseEntity
+        .created(ResourceUtils.uri("users", user))
+        .body(new UserDto(user));
   }
 
   @PutMapping("/{id}")
   public void update(@PathVariable("id") String id, @RequestBody UserDto dto) {
     service.update(id, dto);
-  }
-
-  private URI uri(User user) throws URISyntaxException {
-    return new URI(String.format("/users/%s", user.getId()));
   }
 
 }

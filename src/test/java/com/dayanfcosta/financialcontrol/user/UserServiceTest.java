@@ -3,12 +3,17 @@ package com.dayanfcosta.financialcontrol.user;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 import static java.util.Optional.*;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.data.domain.Pageable.*;
 
 /**
  * @author dayanfcosta
@@ -109,10 +114,37 @@ class UserServiceTest {
   }
 
   @Test
+  void testFindById_NotFound() {
+    // given
+    when(repository.findById(any())).thenReturn(empty());
+
+    // when -> then
+    assertThatThrownBy(() -> service.findById("1"))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("User not found");
+  }
+
+  @Test
   void testFindById() {
+    // given
+    when(repository.findById(any())).thenReturn(of(user));
+
+    // when
+    var withId = service.findById("1");
+
+    // then
+    assertThat(withId).isNotNull();
   }
 
   @Test
   void testFindAll() {
+    // given
+    when(repository.findAll(any())).thenReturn(new PageImpl<>(List.of(user), unpaged(), 1));
+
+    // when
+    var page = service.findAll(unpaged());
+
+    // then
+    assertThat(page).isNotNull();
   }
 }

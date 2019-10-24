@@ -42,7 +42,7 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public User findById(String id) {
-    return repository.findById(id).orElseThrow(() -> new NullPointerException("User doesn't exist"));
+    return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
   }
 
   @Transactional(readOnly = true)

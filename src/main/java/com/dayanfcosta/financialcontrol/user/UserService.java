@@ -1,5 +1,6 @@
 package com.dayanfcosta.financialcontrol.user;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,20 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
  * @author dayanfcosta
  */
 @Service
-public class UserService {
+class UserService {
 
   private final UserRepository repository;
   private final PasswordEncoder passwordEncoder;
 
-  public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
+  UserService(final UserRepository repository, final PasswordEncoder passwordEncoder) {
     this.passwordEncoder = passwordEncoder;
     this.repository = repository;
   }
 
   @Transactional
-  public User save(UserDto dto) {
+  User save(final UserDto dto) {
     validateDuplicatedInsert(dto);
-    var user = UserBuilder.create(dto.getEmail())
+    final var user = UserBuilder.create(dto.getEmail())
         .name(dto.getName())
         .password(passwordEncoder.encode(dto.getPassword()))
         .build();
@@ -32,25 +33,41 @@ public class UserService {
   }
 
   @Transactional
-  public void update(String id, UserDto dto) {
-    var user = repository.findById(id)
+  void update(final String id, final UserDto dto) {
+    final var user = repository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("There isn't any user with the specified id"));
     validateUpdate(user, dto);
-    var updated = updatedUser(user, dto);
+    final var updated = updatedUser(user, dto);
     repository.save(updated);
   }
 
   @Transactional(readOnly = true)
-  public User findById(String id) {
+  User findById(final String id) {
     return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
   }
 
   @Transactional(readOnly = true)
-  public Page<User> findAll(Pageable pageable) {
+  Page<User> findAll(final Pageable pageable) {
     return repository.findAll(pageable);
   }
 
-  private User updatedUser(User user, UserDto dto) {
+  User enable(final String id) {
+    final User user = findById(id);
+    Validate.isTrue(!user.isEnabled(), "User already enabled");
+    user.enable();
+    repository.save(user);
+    return user;
+  }
+
+  User disable(final String id) {
+    final User user = findById(id);
+    Validate.isTrue(user.isEnabled(), "User already disabled");
+    user.disable();
+    repository.save(user);
+    return user;
+  }
+
+  private User updatedUser(final User user, final UserDto dto) {
     return UserBuilder.create(dto.getEmail())
         .password(user.getPassword())
         .enabled(user.isEnabled())
@@ -59,14 +76,14 @@ public class UserService {
         .build();
   }
 
-  private void validateDuplicatedInsert(UserDto dto) {
-    var existing = repository.findByEmail(dto.getEmail());
+  private void validateDuplicatedInsert(final UserDto dto) {
+    final var existing = repository.findByEmail(dto.getEmail());
     if (existing.isPresent()) {
       throw new DuplicateKeyException("User e-mail is already in use");
     }
   }
 
-  private void validateUpdate(User existing, UserDto dto) {
+  private void validateUpdate(final User existing, final UserDto dto) {
     repository.findByEmail(dto.getEmail())
         .ifPresent(user -> {
           if (!user.equals(existing)) {

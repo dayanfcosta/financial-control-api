@@ -105,7 +105,7 @@ class UserBuilderTest {
         .build();
 
     // then
-    assertThat(user.getId()).isEmpty();
+    assertThat(user.getId()).isNullOrEmpty();
     assertThat(user.isEnabled()).isTrue();
   }
 
@@ -118,7 +118,7 @@ class UserBuilderTest {
         .build();
 
     // then
-    assertThat(user.getId()).isEmpty();
+    assertThat(user.getId()).isNullOrEmpty();
     assertThat(user.isEnabled()).isFalse();
   }
 

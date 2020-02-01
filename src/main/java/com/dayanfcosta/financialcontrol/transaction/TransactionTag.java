@@ -4,11 +4,13 @@ import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
 import java.util.Objects;
 import org.apache.commons.lang3.Validate;
 import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(value = "transaction_tags")
 public class TransactionTag extends AbstractDocument {
 
+  @Indexed(unique = true, name = "uk_transaction_tag")
   private final String description;
 
   @PersistenceConstructor
@@ -21,7 +23,7 @@ public class TransactionTag extends AbstractDocument {
     this(null, description);
   }
 
-  public String getDescription() {
+  String getDescription() {
     return description;
   }
 

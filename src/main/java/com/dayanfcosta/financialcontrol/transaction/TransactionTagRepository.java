@@ -10,12 +10,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 final class TransactionTagRepository extends AbstractRepository<TransactionTag> {
 
-  protected TransactionTagRepository(final MongoTemplate template) {
+  TransactionTagRepository(final MongoTemplate template) {
     super(template, TransactionTag.class);
   }
 
-  Optional<TransactionTag> findByDescription(final String description) {
-    final var query = new Query(Criteria.where("description").is(description));
+  Optional<TransactionTag> findByDescriptionIgnoreCase(final String description) {
+    final var query = new Query(Criteria.where("description").regex("^" + description + "$", "i"));
     return Optional.of(findOne(query));
   }
 }

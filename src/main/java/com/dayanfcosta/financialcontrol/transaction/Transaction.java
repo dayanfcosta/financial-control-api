@@ -1,6 +1,7 @@
 package com.dayanfcosta.financialcontrol.transaction;
 
 import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
+import com.dayanfcosta.financialcontrol.user.User;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -17,16 +18,20 @@ public class Transaction extends AbstractDocument {
   @DBRef
   private final TransactionTag tag;
   private final TransactionType type;
+  @DBRef
+  private final User owner;
 
   @PersistenceConstructor
-  Transaction(final String id, final String description, final Currency currency, final BigDecimal amount, final TransactionTag tag,
-      final TransactionType type, final LocalDate date) {
+  Transaction(final String id, final User owner, final LocalDate date, final BigDecimal amount, final Currency currency,
+      final TransactionType type, final String description,
+      final TransactionTag tag) {
     super(id);
     this.description = description;
     this.currency = currency;
     this.amount = amount;
     this.date = date;
     this.type = type;
+    this.owner = owner;
     this.tag = tag;
   }
 
@@ -34,7 +39,7 @@ public class Transaction extends AbstractDocument {
     return date;
   }
 
-  public String getDescription() {
+  String getDescription() {
     return description;
   }
 
@@ -46,11 +51,15 @@ public class Transaction extends AbstractDocument {
     return amount;
   }
 
-  public TransactionTag getTag() {
+  TransactionTag getTag() {
     return tag;
   }
 
   public TransactionType getType() {
     return type;
+  }
+
+  public User getOwner() {
+    return owner;
   }
 }

@@ -4,12 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.dayanfcosta.financialcontrol.AbstractRepositoryTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Query;
 
 /**
  * @author dayanfcosta
@@ -19,19 +17,20 @@ class UserRepositoryTest extends AbstractRepositoryTest {
   private User user;
   private UserRepository repository;
 
+  public UserRepositoryTest() {
+    addDocumentsToClear(User.class);
+  }
+
+  @Override
   @BeforeEach
-  void setUp() {
+  public void setUp() {
+    super.setUp();
     repository = new UserRepository(getMongoTemplate());
     user = UserBuilder.create("email@email.com")
         .withPassword("1234")
         .withEnabledStatus(true)
         .withName("User")
         .build();
-  }
-
-  @AfterEach
-  void tearDown() {
-    getMongoTemplate().remove(new Query(), User.class);
   }
 
   @Test

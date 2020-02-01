@@ -1,12 +1,11 @@
 package com.dayanfcosta.financialcontrol.user;
 
 import com.dayanfcosta.financialcontrol.commons.AbstractRepository;
+import java.util.Optional;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 /**
  * @author dayanfcosta
@@ -14,12 +13,12 @@ import java.util.Optional;
 @Repository
 class UserRepository extends AbstractRepository<User> {
 
-  UserRepository(MongoTemplate template) {
+  UserRepository(final MongoTemplate template) {
     super(template, User.class);
   }
 
-  Optional<User> findByEmail(String email) {
-    var query = new Query(Criteria.where("email").is(email));
+  Optional<User> findByEmail(final String email) {
+    final var query = new Query(Criteria.where("email").is(email));
     return Optional.ofNullable(findOne(query));
   }
 }

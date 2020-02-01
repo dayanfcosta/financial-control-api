@@ -1,15 +1,17 @@
 package com.dayanfcosta.financialcontrol.user;
 
+import static com.dayanfcosta.financialcontrol.commons.Views.Form;
+import static com.dayanfcosta.financialcontrol.commons.Views.Listing;
+import static com.dayanfcosta.financialcontrol.commons.Views.Select;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import static com.dayanfcosta.financialcontrol.commons.Views.*;
-
 /**
  * @author dayanfcosta
  */
-class UserDto {
+public class UserDto {
 
   @JsonView({Listing.class, Form.class, Select.class})
   private final String id;
@@ -20,17 +22,17 @@ class UserDto {
   private final String password;
 
   @JsonCreator
-  public UserDto(@JsonProperty("id") String id,
-                 @JsonProperty("name") String name,
-                 @JsonProperty("email") String email,
-                 @JsonProperty("password") String password) {
+  private UserDto(@JsonProperty("id") final String id,
+      @JsonProperty("name") final String name,
+      @JsonProperty("email") final String email,
+      @JsonProperty("password") final String password) {
     this.id = id;
     this.name = name;
     this.email = email;
     this.password = password;
   }
 
-  public UserDto(User user) {
+  UserDto(final User user) {
     this(user.getId(), user.getName(), user.getEmail(), user.getPassword());
   }
 
@@ -42,11 +44,11 @@ class UserDto {
     return name;
   }
 
-  public String getEmail() {
+  String getEmail() {
     return email;
   }
 
-  public String getPassword() {
+  String getPassword() {
     return password;
   }
 }

@@ -4,27 +4,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.dayanfcosta.financialcontrol.AbstractRepositoryTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Query;
 
 class TransactionTagRepositoryTest extends AbstractRepositoryTest {
 
   private TransactionTag tag;
   private TransactionTagRepository repository;
 
-  @BeforeEach
-  void setUp() {
-    tag = new TransactionTag("teste");
-    repository = new TransactionTagRepository(getMongoTemplate());
+  public TransactionTagRepositoryTest() {
+    addDocumentsToClear(TransactionTag.class);
   }
 
-  @AfterEach
-  void tearDown() {
-    getMongoTemplate().remove(new Query(), TransactionTag.class);
+  @Override
+  @BeforeEach
+  public void setUp() {
+    tag = new TransactionTag("teste");
+    repository = new TransactionTagRepository(getMongoTemplate());
   }
 
   @Test

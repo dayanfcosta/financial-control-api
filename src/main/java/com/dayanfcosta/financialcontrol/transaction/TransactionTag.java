@@ -17,6 +17,10 @@ public class TransactionTag extends AbstractDocument {
     this.description = Validate.notEmpty(description, "Invalid tag description");
   }
 
+  TransactionTag(final String description) {
+    this(null, description);
+  }
+
   public String getDescription() {
     return description;
   }

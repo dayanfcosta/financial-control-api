@@ -1,14 +1,12 @@
 package com.dayanfcosta.financialcontrol.commons;
 
+import java.util.Collections;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.repository.support.PageableExecutionUtils;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author dayanfcosta
@@ -18,12 +16,12 @@ public abstract class AbstractRepository<D extends AbstractDocument> {
   private final MongoTemplate template;
   private final Class<D> clazz;
 
-  protected AbstractRepository(MongoTemplate template, Class<D> clazz) {
+  protected AbstractRepository(final MongoTemplate template, final Class<D> clazz) {
     this.template = template;
     this.clazz = clazz;
   }
 
-  public D save(D document) {
+  public D save(final D document) {
     return template.save(document);
   }
 
@@ -32,18 +30,17 @@ public abstract class AbstractRepository<D extends AbstractDocument> {
   }
 
   public Page<D> findAll(final Pageable pageable) {
-    var query = new Query().with(pageable);
-    var page = Collections.unmodifiableList(template.find(query, clazz));
+    final var query = new Query().with(pageable);
+    final var page = Collections.unmodifiableList(template.find(query, clazz));
     return PageableExecutionUtils.getPage(page, pageable, () -> template.count(query, clazz));
   }
 
   protected Page<D> find(final Query query, final Pageable pageable) {
-    var page = Collections.unmodifiableList(template.find(query.with(pageable), clazz));
-    return PageableExecutionUtils
-        .getPage(page, pageable, () -> template.count(query.with(pageable), clazz));
+    final var page = Collections.unmodifiableList(template.find(query.with(pageable), clazz));
+    return PageableExecutionUtils.getPage(page, pageable, () -> template.count(query.with(pageable), clazz));
   }
 
-  protected D findOne(Query query) {
+  protected D findOne(final Query query) {
     return template.findOne(query, clazz);
   }
 

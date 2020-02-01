@@ -3,35 +3,25 @@ package com.dayanfcosta.financialcontrol.user;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.dayanfcosta.financialcontrol.AbstractRepositoryTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * @author dayanfcosta
  */
-@DataMongoTest
-@ExtendWith(SpringExtension.class)
-class UserRepositoryTest {
-
-  @Autowired
-  private MongoTemplate mongoTemplate;
-
-  private UserRepository repository;
+class UserRepositoryTest extends AbstractRepositoryTest {
 
   private User user;
+  private UserRepository repository;
 
   @BeforeEach
   void setUp() {
-    repository = new UserRepository(mongoTemplate);
+    repository = new UserRepository(getMongoTemplate());
     user = UserBuilder.create("email@email.com")
         .withPassword("1234")
         .withEnabledStatus(true)
@@ -41,7 +31,7 @@ class UserRepositoryTest {
 
   @AfterEach
   void tearDown() {
-    mongoTemplate.remove(new Query(), User.class);
+    getMongoTemplate().remove(new Query(), User.class);
   }
 
   @Test

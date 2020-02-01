@@ -36,8 +36,8 @@ class UserServiceTest {
     service = new UserService(repository, passwordEncoder);
 
     user = UserBuilder.create("email@email.com")
-        .password("pass")
-        .name("User")
+        .withPassword("pass")
+        .withName("User")
         .build();
   }
 
@@ -92,7 +92,7 @@ class UserServiceTest {
   @Test
   void testUpdate_EmailInUse() {
     // given
-    final var newUser = UserBuilder.create("xpto@email.com").name("Xpto").password("pass").build();
+    final var newUser = UserBuilder.create("xpto@email.com").withName("Xpto").withPassword("pass").build();
     when(repository.findById(any())).thenReturn(of(newUser));
     when(repository.findByEmail(any())).thenReturn(of(user));
 
@@ -105,12 +105,13 @@ class UserServiceTest {
   @Test
   void testUpdate() {
     // given
-    final var userWithId = UserBuilder.create(user.getEmail()).id("1").name(user.getName()).password(user.getPassword()).build();
+    final var userWithId = UserBuilder.create(user.getEmail()).withId("1").withName(user.getName()).withPassword(user.getPassword())
+        .build();
     when(repository.findById(any())).thenReturn(of(userWithId));
     when(repository.findByEmail(any())).thenReturn(of(userWithId));
 
     // when
-    final var newUser = UserBuilder.create("email@email.com").password("pass").name("User Updated").id("1").build();
+    final var newUser = UserBuilder.create("email@email.com").withPassword("pass").withName("User Updated").withId("1").build();
     service.update("1", new UserDto(newUser));
 
     // then

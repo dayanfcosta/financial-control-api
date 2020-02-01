@@ -1,8 +1,9 @@
 package com.dayanfcosta.financialcontrol.user;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author dayanfcosta
@@ -33,10 +34,10 @@ class UserBuilderTest {
   @Test
   void testName_PasswordName() {
     // given
-    var builder = UserBuilder.create("email@email.com");
+    final var builder = UserBuilder.create("email@email.com");
 
     // then
-    assertThatThrownBy(() -> builder.name(""))
+    assertThatThrownBy(() -> builder.withName(""))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid user name");
   }
@@ -44,10 +45,10 @@ class UserBuilderTest {
   @Test
   void testName_NullName() {
     // given
-    var builder = UserBuilder.create("email@email.com");
+    final var builder = UserBuilder.create("email@email.com");
 
     // then
-    assertThatThrownBy(() -> builder.name(null))
+    assertThatThrownBy(() -> builder.withName(null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("Invalid user name");
   }
@@ -55,10 +56,10 @@ class UserBuilderTest {
   @Test
   void testName_WhitespacesName() {
     // given
-    var builder = UserBuilder.create("email@email.com");
+    final var builder = UserBuilder.create("email@email.com");
 
     // then
-    assertThatThrownBy(() -> builder.name("    "))
+    assertThatThrownBy(() -> builder.withName("    "))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid user name");
   }
@@ -69,7 +70,7 @@ class UserBuilderTest {
     final var builder = UserBuilder.create("email@email.com");
 
     // then
-    assertThatThrownBy(() -> builder.password("    "))
+    assertThatThrownBy(() -> builder.withPassword("    "))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid user password");
   }
@@ -77,10 +78,10 @@ class UserBuilderTest {
   @Test
   void testPassword_EmptyPassword() {
     // given
-    var builder = UserBuilder.create("email@email.com");
+    final var builder = UserBuilder.create("email@email.com");
 
     // then
-    assertThatThrownBy(() -> builder.password(""))
+    assertThatThrownBy(() -> builder.withPassword(""))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid user password");
   }
@@ -88,10 +89,10 @@ class UserBuilderTest {
   @Test
   void testPassword_NullPassword() {
     // given
-    var builder = UserBuilder.create("email@email.com");
+    final var builder = UserBuilder.create("email@email.com");
 
     // then
-    assertThatThrownBy(() -> builder.password(null))
+    assertThatThrownBy(() -> builder.withPassword(null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("Invalid user password");
   }
@@ -99,9 +100,9 @@ class UserBuilderTest {
   @Test
   void testCreate_WithoutId() {
     // given
-    var user = UserBuilder.create("email@email.com")
-        .name("User name")
-        .password("User password")
+    final var user = UserBuilder.create("email@email.com")
+        .withName("User name")
+        .withPassword("User password")
         .build();
 
     // then
@@ -111,10 +112,10 @@ class UserBuilderTest {
 
   @Test
   void testCreate_DisabledUser() {
-    var user = UserBuilder.create("email@email.com")
-        .password("User password")
-        .name("User name")
-        .enabled(false)
+    final var user = UserBuilder.create("email@email.com")
+        .withPassword("User password")
+        .withName("User name")
+        .withEnabledStatus(false)
         .build();
 
     // then

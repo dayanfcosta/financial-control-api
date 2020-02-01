@@ -26,8 +26,8 @@ class UserService {
   User save(final UserDto dto) {
     validateDuplicatedInsert(dto);
     final var user = UserBuilder.create(dto.getEmail())
-        .name(dto.getName())
-        .password(passwordEncoder.encode(dto.getPassword()))
+        .withName(dto.getName())
+        .withPassword(passwordEncoder.encode(dto.getPassword()))
         .build();
     return repository.save(user);
   }
@@ -69,10 +69,10 @@ class UserService {
 
   private User updatedUser(final User user, final UserDto dto) {
     return UserBuilder.create(dto.getEmail())
-        .password(user.getPassword())
-        .enabled(user.isEnabled())
-        .id(user.getId())
-        .name(dto.getName())
+        .withPassword(user.getPassword())
+        .withEnabledStatus(user.isEnabled())
+        .withId(user.getId())
+        .withName(dto.getName())
         .build();
   }
 

@@ -4,6 +4,7 @@ import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(value = "transactions")
@@ -13,6 +14,7 @@ public class Transaction extends AbstractDocument {
   private final String description;
   private final Currency currency;
   private final BigDecimal amount;
+  @DBRef
   private final TransactionTag tag;
   private final TransactionType type;
 

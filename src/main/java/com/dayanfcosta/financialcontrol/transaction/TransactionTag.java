@@ -3,6 +3,7 @@ package com.dayanfcosta.financialcontrol.transaction;
 import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
 import java.util.Objects;
 import org.apache.commons.lang3.Validate;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(value = "transaction_tags")
@@ -10,7 +11,8 @@ public class TransactionTag extends AbstractDocument {
 
   private final String description;
 
-  public TransactionTag(final String id, final String description) {
+  @PersistenceConstructor
+  TransactionTag(final String id, final String description) {
     super(id);
     this.description = Validate.notEmpty(description, "Invalid tag description");
   }
@@ -24,10 +26,7 @@ public class TransactionTag extends AbstractDocument {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    if (!super.equals(o)) {
+    if (o == null || getClass() != o.getClass() || !super.equals(o)) {
       return false;
     }
     final TransactionTag that = (TransactionTag) o;

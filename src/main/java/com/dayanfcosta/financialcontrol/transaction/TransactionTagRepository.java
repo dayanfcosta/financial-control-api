@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-final class TransactionTagRepository extends AbstractRepository<TransactionTag> {
+class TransactionTagRepository extends AbstractRepository<TransactionTag> {
 
   TransactionTagRepository(final MongoTemplate template) {
     super(template, TransactionTag.class);

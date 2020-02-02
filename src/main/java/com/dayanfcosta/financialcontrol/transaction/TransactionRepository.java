@@ -24,8 +24,19 @@ class TransactionRepository extends AbstractRepository<Transaction> {
   }
 
   Page<Transaction> findByDateInterval(final LocalDate start, final LocalDate end, final Pageable pageable) {
-    final var criteria = Criteria.where(DATE_FIELD).gte(start).lte(end);
+    final Criteria criteria = createIntervalCriteria(start, end);
     final var query = new Query(criteria).with(pageable);
     return find(query, pageable);
+  }
+
+  private Criteria createIntervalCriteria(final LocalDate start, final LocalDate end) {
+    final var criteria = Criteria.where(DATE_FIELD);
+    if (start != null) {
+      criteria.gte(start);
+    }
+    if (end != null) {
+      criteria.lte(end);
+    }
+    return criteria;
   }
 }

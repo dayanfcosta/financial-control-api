@@ -35,6 +35,10 @@ public abstract class AbstractRepository<D extends AbstractDocument> {
     return PageableExecutionUtils.getPage(page, pageable, () -> template.count(query, clazz));
   }
 
+  public boolean remove(final D document) {
+    return template.remove(document).getDeletedCount() > 0;
+  }
+
   protected Page<D> find(final Query query, final Pageable pageable) {
     final var page = Collections.unmodifiableList(template.find(query.with(pageable), clazz));
     return PageableExecutionUtils.getPage(page, pageable, () -> template.count(query.with(pageable), clazz));

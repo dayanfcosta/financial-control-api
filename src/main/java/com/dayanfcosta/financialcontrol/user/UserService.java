@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author dayanfcosta
  */
 @Service
-class UserService {
+public class UserService {
 
   private final UserRepository repository;
   private final PasswordEncoder passwordEncoder;
@@ -34,15 +34,14 @@ class UserService {
 
   @Transactional
   void update(final String id, final UserDto dto) {
-    final var user = repository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("There isn't any user with the specified id"));
+    final var user = findById(id);
     validateUpdate(user, dto);
     final var updated = updatedUser(user, dto);
     repository.save(updated);
   }
 
   @Transactional(readOnly = true)
-  User findById(final String id) {
+  public User findById(final String id) {
     return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
   }
 

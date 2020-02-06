@@ -1,5 +1,6 @@
 package com.dayanfcosta.financialcontrol.user;
 
+import java.util.Optional;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -12,6 +13,7 @@ public final class UserBuilder {
   private String password;
   private final String email;
   private boolean enabled = true;
+  private Optional<UserProfile> profile = Optional.empty();
 
   private UserBuilder(final String email) {
     this.email = Validate.notBlank(email, "Invalid user e-mail");
@@ -41,9 +43,14 @@ public final class UserBuilder {
     return this;
   }
 
+  UserBuilder withProfile(final UserProfile profile) {
+    this.profile = Optional.ofNullable(profile);
+    return this;
+  }
+
   public User build() {
     Validate.notBlank(name, "Invalid user name");
     Validate.notBlank(password, "Invalid user password");
-    return new User(id, name, email, password, enabled);
+    return new User(id, name, email, password, enabled, profile.orElse(UserProfile.USER));
   }
 }

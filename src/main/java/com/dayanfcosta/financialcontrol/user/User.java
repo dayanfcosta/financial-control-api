@@ -17,14 +17,16 @@ public class User extends AbstractDocument {
   @Indexed(unique = true, name = "uk_user")
   private final String email;
   private final String password;
+  private final UserProfile profile;
 
   @PersistenceConstructor
-  User(String id, String name, String email, String password, boolean enabled) {
+  User(final String id, final String name, final String email, final String password, final boolean enabled, final UserProfile profile) {
     super(id);
     this.name = Validate.notBlank(name, "Invalid user name");
     this.email = Validate.notBlank(email, "invalid user e-mail");
     this.password = Validate.notBlank(password, "Invalid user password");
     this.enabled = enabled;
+    this.profile = Validate.notNull(profile, "Invalid user profile");
   }
 
   public String getName() {
@@ -51,11 +53,19 @@ public class User extends AbstractDocument {
     enabled = false;
   }
 
+  public UserProfile getProfile() {
+    return profile;
+  }
+
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    User user = (User) o;
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final User user = (User) o;
     return email.equals(user.email);
   }
 

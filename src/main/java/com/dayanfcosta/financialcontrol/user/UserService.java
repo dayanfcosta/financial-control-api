@@ -4,6 +4,7 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,12 @@ public class UserService {
   @Transactional(readOnly = true)
   public User findById(final String id) {
     return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
+  }
+
+  @Transactional(readOnly = true)
+  public User findByEmail(final String email) {
+    return repository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
   @Transactional(readOnly = true)

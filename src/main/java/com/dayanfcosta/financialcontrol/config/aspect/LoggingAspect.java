@@ -30,7 +30,9 @@ public class LoggingAspect {
 
   @AfterThrowing(pointcut = "execution(* com.dayanfcosta..*(..))", throwing = "ex")
   public void logAfterThrowingAllMethods(final JoinPoint joinPoint, final Exception ex) throws Throwable {
-    LOGGER.error("Error when executing {} with arguments: {} ", joinPoint.getSignature().getName(), joinPoint.getArgs(), ex);
+    final var signature = joinPoint.getSignature();
+    final var className = signature.getDeclaringType().getName();
+    LOGGER.error("Error when executing {}.{} with arguments: {} ", className, signature.getName(), joinPoint.getArgs());
   }
 
 }

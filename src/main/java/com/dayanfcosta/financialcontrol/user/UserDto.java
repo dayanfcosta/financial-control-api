@@ -51,4 +51,13 @@ public class UserDto {
   String getPassword() {
     return password;
   }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("UserDto{");
+    sb.append("name='").append(name).append('\'');
+    sb.append(", email='").append(email).append('\'');
+    sb.append('}');
+    return sb.toString();
+  }
 }

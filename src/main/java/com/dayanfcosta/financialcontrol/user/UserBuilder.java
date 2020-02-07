@@ -43,7 +43,7 @@ public final class UserBuilder {
     return this;
   }
 
-  UserBuilder withProfile(final UserProfile profile) {
+  public UserBuilder withProfile(final UserProfile profile) {
     this.profile = Optional.ofNullable(profile);
     return this;
   }

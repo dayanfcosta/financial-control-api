@@ -10,7 +10,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,11 +51,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private String getToken(final HttpServletRequest request) {
-    final var header = request.getHeader(jwtConfig.getHeader());
-    return isValidHeader(header) ? header.replace(jwtConfig.getPrefix(), "") : null;
+    return request.getHeader(jwtConfig.getHeader());
   }
 
-  private boolean isValidHeader(final String header) {
-    return StringUtils.isNotBlank(header) && header.startsWith(jwtConfig.getPrefix());
-  }
 }

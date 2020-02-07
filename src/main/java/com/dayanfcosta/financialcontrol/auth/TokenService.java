@@ -5,6 +5,7 @@ import com.dayanfcosta.financialcontrol.user.User;
 import com.dayanfcosta.financialcontrol.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.LocalDateTime;
@@ -35,10 +36,7 @@ public class TokenService {
 
   public boolean isValidToken(final String token) {
     try {
-      Jwts.parser()
-          .setSigningKey(jwtConfig.getSecret())
-          .parseClaimsJws(token)
-          .getBody();
+      getTokenBody(token);
       return true;
     } catch (final Exception ex) {
       return false;
@@ -47,7 +45,7 @@ public class TokenService {
 
   public String userIdFromToken(final String token) {
     try {
-      final var subject = getJwtSubject(token);
+      final var subject = getTokenBody(token).getSubject();
       final var authenticatedUser = objectMapper.readValue(subject, AuthenticatedUser.class);
       return authenticatedUser.getId();
     } catch (final JsonProcessingException ex) {
@@ -55,12 +53,16 @@ public class TokenService {
     }
   }
 
-  private String getJwtSubject(final String token) {
-    return Jwts.parser()
-        .setSigningKey(jwtConfig.getSecret())
-        .parseClaimsJws(token)
-        .getBody()
-        .getSubject();
+  private Claims getTokenBody(final String token) {
+    try {
+      final var tokenWithoutPrefix = removeTokenPrefix(token);
+      return Jwts.parser()
+          .setSigningKey(jwtConfig.getSecret())
+          .parseClaimsJws(tokenWithoutPrefix)
+          .getBody();
+    } catch (final Exception ex) {
+      throw new RuntimeException("Invalid JWT token format: ", ex);
+    }
   }
 
   private String token(final AuthenticatedUser authenticatedUser) {
@@ -82,6 +84,10 @@ public class TokenService {
     final var expirationDate = LocalDateTime.now().plusSeconds(jwtConfig.getExpiration());
     final var instant = expirationDate.atZone(ZoneId.systemDefault()).toInstant();
     return Date.from(instant);
+  }
+
+  private String removeTokenPrefix(final String token) {
+    return token.replace(jwtConfig.getPrefix(), "").trim();
   }
 
 }

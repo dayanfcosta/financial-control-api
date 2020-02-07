@@ -6,6 +6,10 @@ spring:
       database: financial-control
       host: localhost
       port: 27017
+      username: root
+      password: root
+      auto-index-creation: false
+      authentication-database: admin
   main:
     banner-mode: off
 server:

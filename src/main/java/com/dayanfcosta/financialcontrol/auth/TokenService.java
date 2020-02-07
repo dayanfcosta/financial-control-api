@@ -1,7 +1,7 @@
 package com.dayanfcosta.financialcontrol.auth;
 
 import com.dayanfcosta.financialcontrol.config.security.JwtConfig;
-import com.dayanfcosta.financialcontrol.user.User;
+import com.dayanfcosta.financialcontrol.config.security.UserDetailsImpl;
 import com.dayanfcosta.financialcontrol.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +28,7 @@ public class TokenService {
   }
 
   public String generateToken(final Authentication authentication) {
-    final var userId = ((User) authentication.getPrincipal()).getId();
+    final var userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
     final var user = userService.findById(userId);
     final String token = token(new AuthenticatedUser(user));
     return String.format("%s %s", jwtConfig.getPrefix(), token);

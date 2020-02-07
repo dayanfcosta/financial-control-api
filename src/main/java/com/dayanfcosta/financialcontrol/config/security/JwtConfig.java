@@ -10,7 +10,7 @@ public class JwtConfig {
   private String header;
   @Value("${security.jwt.expiration:8400}")
   private int expiration;
-  @Value("${security.jwt.secret:B3RbbSUOj8ff0qjdiW5W")
+  @Value("${security.jwt.secret:B3RbbSUOj8ff0qjdiW5W}")
   private String secret;
   @Value("${security.jwt.prefix:Bearer}")
   private String prefix;

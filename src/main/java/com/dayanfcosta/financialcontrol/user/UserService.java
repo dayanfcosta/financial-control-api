@@ -4,10 +4,8 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author dayanfcosta
@@ -23,7 +21,6 @@ public class UserService {
     this.repository = repository;
   }
 
-  @Transactional
   User save(final UserDto dto) {
     validateDuplicatedInsert(dto);
     final var user = UserBuilder.create(dto.getEmail())
@@ -33,7 +30,6 @@ public class UserService {
     return repository.save(user);
   }
 
-  @Transactional
   void update(final String id, final UserDto dto) {
     final var user = findById(id);
     validateUpdate(user, dto);
@@ -41,18 +37,15 @@ public class UserService {
     repository.save(updated);
   }
 
-  @Transactional(readOnly = true)
   public User findById(final String id) {
     return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
   }
 
-  @Transactional(readOnly = true)
   public User findByEmail(final String email) {
     return repository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        .orElseThrow(() -> new NullPointerException("User not found"));
   }
 
-  @Transactional(readOnly = true)
   Page<User> findAll(final Pageable pageable) {
     return repository.findAll(pageable);
   }

@@ -64,18 +64,4 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     return new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword(), Collections.emptyList());
   }
 
-  private class Credentials {
-
-    private String username;
-    private String password;
-
-    public String getUsername() {
-      return username;
-    }
-
-    public String getPassword() {
-      return password;
-    }
-
-  }
 }

@@ -3,7 +3,7 @@ package com.dayanfcosta.financialcontrol.config.security;
 import com.dayanfcosta.financialcontrol.auth.TokenService;
 import com.dayanfcosta.financialcontrol.user.UserService;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,22 +19,23 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final UserService userService;
-  private final TokenService tokenService;
-  private final AuthenticationService authenticationService;
-  private final AuthenticationFailureHandler failureHandler;
+  @Autowired
+  private JwtConfig jwtConfig;
+  @Autowired
+  private UserService userService;
+  @Autowired
+  private TokenService tokenService;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+  @Autowired
+  private AuthenticationService authenticationService;
+  @Autowired
+  private AuthenticationFailureHandler failureHandler;
 
-  public SecurityConfig(final UserService userService, final TokenService tokenService, final AuthenticationService authenticationService,
-      final AuthenticationFailureHandler failureHandler) {
-    this.userService = userService;
-    this.tokenService = tokenService;
-    this.authenticationService = authenticationService;
-    this.failureHandler = failureHandler;
-  }
 
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
-    final var config = jwtConfig();
+    final var config = jwtConfig;
     http
         .csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -50,17 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(authenticationService).passwordEncoder(passwordEncoder());
-  }
-
-  @Bean
-  BCryptPasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  JwtConfig jwtConfig() {
-    return new JwtConfig();
+    auth.userDetailsService(authenticationService).passwordEncoder(passwordEncoder);
   }
 
 }

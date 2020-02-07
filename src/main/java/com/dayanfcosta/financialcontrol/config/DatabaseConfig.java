@@ -1,13 +1,14 @@
 package com.dayanfcosta.financialcontrol.config;
 
-import com.mongodb.WriteConcern;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.MongoTransactionManager;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.WriteConcernResolver;
+import org.springframework.data.mongodb.core.convert.MongoConverter;
+import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
+import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
@@ -17,25 +18,27 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories
 public class DatabaseConfig {
 
-  @Bean
-  MongoTemplate mongoTemplate(MongoDbFactory dbFactory) {
-    var template = new MongoTemplate(dbFactory);
-    template.setWriteConcernResolver(writeConcernResolver());
-    return template;
+  private final MongoTemplate mongoTemplate;
+  private final MongoConverter mongoConverter;
+
+  public DatabaseConfig(final MongoTemplate mongoTemplate, final MongoConverter mongoConverter) {
+    this.mongoTemplate = mongoTemplate;
+    this.mongoConverter = mongoConverter;
   }
 
-  @Bean
-  MongoTransactionManager transactionManager(MongoDbFactory dbFactory) {
-    return new MongoTransactionManager(dbFactory);
-  }
-
-  private WriteConcernResolver writeConcernResolver() {
-    return action -> {
-      if (action.getClass().getSimpleName().contains("Audit"))
-        return WriteConcern.UNACKNOWLEDGED;
-      else if (action.getClass().getSimpleName().contains("Metadata"))
-        return WriteConcern.JOURNALED;
-      return action.getDefaultWriteConcern();
-    };
+  @EventListener(ApplicationReadyEvent.class)
+  public void initIndicesAfterStartup() {
+    final var mappingContext = mongoConverter.getMappingContext();
+    if (mappingContext instanceof MongoMappingContext) {
+      final var mongoMappingContext = (MongoMappingContext) mappingContext;
+      for (final BasicMongoPersistentEntity<?> persistentEntity : mongoMappingContext.getPersistentEntities()) {
+        final var clazz = persistentEntity.getType();
+        if (clazz.isAnnotationPresent(Document.class)) {
+          final var indexOps = mongoTemplate.indexOps(clazz);
+          final var resolver = new MongoPersistentEntityIndexResolver(mongoMappingContext);
+          resolver.resolveIndexFor(clazz).forEach(indexOps::ensureIndex);
+        }
+      }
+    }
   }
 }

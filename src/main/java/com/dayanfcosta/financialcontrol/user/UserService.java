@@ -1,7 +1,7 @@
 package com.dayanfcosta.financialcontrol.user;
 
+import com.dayanfcosta.financialcontrol.commons.DuplicateKeyException;
 import org.apache.commons.lang3.Validate;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,8 +21,8 @@ public class UserService {
     this.repository = repository;
   }
 
+  @DuplicateKeyException(message = "User e-mail is already in use")
   User save(final UserDto dto) {
-    validateDuplicatedInsert(dto);
     final var user = UserBuilder.create(dto.getEmail())
         .withName(dto.getName())
         .withPassword(passwordEncoder.encode(dto.getPassword()))
@@ -73,13 +73,6 @@ public class UserService {
         .withId(user.getId())
         .withName(dto.getName())
         .build();
-  }
-
-  private void validateDuplicatedInsert(final UserDto dto) {
-    final var existing = repository.findByEmail(dto.getEmail());
-    if (existing.isPresent()) {
-      throw new DuplicateKeyException("User e-mail is already in use");
-    }
   }
 
   private void validateUpdate(final User existing, final UserDto dto) {

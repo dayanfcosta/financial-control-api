@@ -49,13 +49,13 @@ class UserServiceTest {
     service.save(new UserDto(user));
 
     verify(repository, times(1)).save(any());
-    verify(repository, times(1)).findByEmail(user.getEmail());
     verify(passwordEncoder, times(1)).encode(user.getPassword());
   }
 
   @Test
   void testSave_Duplicated() {
-    when(repository.findByEmail(any())).thenReturn(of(user));
+    when(passwordEncoder.encode(any())).thenReturn(new BCryptPasswordEncoder().encode(user.getPassword()));
+    when(repository.save(any())).thenThrow(new DuplicateKeyException("User e-mail is already in use"));
 
     assertThatThrownBy(() -> service.save(new UserDto(user)))
         .isInstanceOf(DuplicateKeyException.class)

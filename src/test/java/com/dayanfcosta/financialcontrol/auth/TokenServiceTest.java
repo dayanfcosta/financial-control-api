@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.dayanfcosta.financialcontrol.config.security.JwtConfig;
+import com.dayanfcosta.financialcontrol.config.security.UserDetailsImpl;
 import com.dayanfcosta.financialcontrol.user.User;
 import com.dayanfcosta.financialcontrol.user.UserBuilder;
 import com.dayanfcosta.financialcontrol.user.UserService;
@@ -24,6 +25,7 @@ class TokenServiceTest {
   private TokenService tokenService;
 
   private User user;
+  private UserDetailsImpl userDetail;
 
   @BeforeEach
   void setUp() {
@@ -33,6 +35,7 @@ class TokenServiceTest {
         .withName("User name")
         .withId("1")
         .build();
+    userDetail = new UserDetailsImpl(user);
 
     initMocks();
     configureMocks();
@@ -40,7 +43,7 @@ class TokenServiceTest {
 
   @Test
   void testGenerateToken() {
-    final var authentication = new UsernamePasswordAuthenticationToken(user, null);
+    final var authentication = new UsernamePasswordAuthenticationToken(userDetail, null);
     final var token = tokenService.generateToken(authentication);
 
     assertThat(token).isNotNull();
@@ -50,7 +53,7 @@ class TokenServiceTest {
 
   @Test
   void testIsTokenValid() {
-    final var authentication = new UsernamePasswordAuthenticationToken(user, null);
+    final var authentication = new UsernamePasswordAuthenticationToken(userDetail, null);
     final var token = tokenService.generateToken(authentication);
 
     final var isValid = tokenService.isValidToken(token);
@@ -74,7 +77,7 @@ class TokenServiceTest {
 
   @Test
   void testUserIdFromToken() {
-    final var authentication = new UsernamePasswordAuthenticationToken(user, null);
+    final var authentication = new UsernamePasswordAuthenticationToken(userDetail, null);
     final var token = tokenService.generateToken(authentication);
 
     final var userId = tokenService.userIdFromToken(token);

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.apache.commons.lang3.Validate;
 
-class TransactionBuilder {
+public class TransactionBuilder {
 
   private String id;
   private final User owner;
@@ -27,27 +27,27 @@ class TransactionBuilder {
     this.owner = Validate.notNull(owner, "Transaction owner invalid");
   }
 
-  static TransactionBuilder create(final User owner, final LocalDate date, final Currency currency, final BigDecimal amount,
+  public static TransactionBuilder create(final User owner, final LocalDate date, final Currency currency, final BigDecimal amount,
       final TransactionType type) {
     return new TransactionBuilder(date, amount, currency, type, owner);
   }
 
-  TransactionBuilder withTag(final TransactionTag tag) {
+  public TransactionBuilder withTag(final TransactionTag tag) {
     this.tag = tag;
     return this;
   }
 
-  TransactionBuilder withDescription(final String description) {
+  public TransactionBuilder withDescription(final String description) {
     this.description = description;
     return this;
   }
 
-  TransactionBuilder withId(final String id) {
+  public TransactionBuilder withId(final String id) {
     this.id = id;
     return this;
   }
 
-  Transaction build() {
+  public Transaction build() {
     return new Transaction(id, owner, date, amount, currency, type, description, tag);
   }
 

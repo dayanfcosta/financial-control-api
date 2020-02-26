@@ -23,15 +23,14 @@ public class Transaction extends AbstractDocument {
 
   @PersistenceConstructor
   Transaction(final String id, final User owner, final LocalDate date, final BigDecimal amount, final Currency currency,
-      final TransactionType type, final String description,
-      final TransactionTag tag) {
+      final TransactionType type, final String description, final TransactionTag tag) {
     super(id);
     this.description = description;
     this.currency = currency;
     this.amount = amount;
+    this.owner = owner;
     this.date = date;
     this.type = type;
-    this.owner = owner;
     this.tag = tag;
   }
 

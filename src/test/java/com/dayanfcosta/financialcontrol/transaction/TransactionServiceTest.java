@@ -17,14 +17,12 @@ import static org.springframework.data.domain.Pageable.unpaged;
 
 import com.dayanfcosta.financialcontrol.user.User;
 import com.dayanfcosta.financialcontrol.user.UserBuilder;
-import com.dayanfcosta.financialcontrol.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 
 class TransactionServiceTest {
 
-  private UserService userService;
   private TransactionRepository repository;
   private TransactionTagService tagService;
   private TransactionService transactionService;
@@ -34,10 +32,9 @@ class TransactionServiceTest {
 
   @BeforeEach
   void setUp() {
-    userService = mock(UserService.class);
     repository = mock(TransactionRepository.class);
     tagService = mock(TransactionTagService.class);
-    transactionService = new TransactionService(repository, userService, tagService);
+    transactionService = new TransactionService(repository, tagService);
 
     user = UserBuilder.create("email@email.com")
         .withPassword("pass")
@@ -51,88 +48,96 @@ class TransactionServiceTest {
 
   @Test
   void testSave_withoutTag() {
-    when(userService.findById(any())).thenReturn(user);
     when(tagService.findById(any())).thenReturn(null);
 
-    transactionService.save(new TransactionDto(transaction));
+    transactionService.save(new TransactionDto(transaction), user);
 
     verify(repository, times(1)).save(any());
     verify(tagService, times(0)).findById(any());
-    verify(userService, times(1)).findById(any());
   }
 
   @Test
   void testSave_withTag() {
-    when(userService.findById(any())).thenReturn(user);
     when(tagService.findById(any())).thenReturn(new TransactionTag("1", "xpto"));
 
     transaction = TransactionBuilder
         .create(user, now(), EUR, ONE, INCOME)
         .withTag(new TransactionTag("1", "xpto"))
         .build();
-    transactionService.save(new TransactionDto(transaction));
+    transactionService.save(new TransactionDto(transaction), user);
 
     verify(repository, times(1)).save(any());
     verify(tagService, times(1)).findById(any());
-    verify(userService, times(1)).findById(any());
   }
 
   @Test
   void testUpdate() {
-    when(userService.findById(any())).thenReturn(user);
     when(repository.findById(any())).thenReturn(of(transaction));
 
-    transactionService.update("1", new TransactionDto(transaction));
+    transactionService.update("1", new TransactionDto(transaction), user);
 
     verify(repository, times(1)).save(any());
     verify(tagService, times(0)).findById(any());
-    verify(userService, times(1)).findById(any());
   }
 
   @Test
   void testRemove() {
     when(repository.findById(any())).thenReturn(of(transaction));
 
-    transactionService.remove("1");
+    transactionService.remove("1", user);
 
     verify(repository, times(1)).remove(any());
     verify(repository, times(1)).findById(any());
   }
 
   @Test
+  void testRemove_differentOwner() {
+    when(repository.findById(any())).thenReturn(of(transaction));
+
+    final var newUser = UserBuilder.create("user@user.com")
+        .withPassword("pass")
+        .withName("User")
+        .build();
+
+    assertThatThrownBy(() -> transactionService.remove("1", newUser))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("You are not the owner of this transaction");
+  }
+
+  @Test
   void testFindAll_byFromDate() {
-    when(repository.findByDateInterval(any(), any(), any())).thenReturn(Page.empty());
+    when(repository.findByDateInterval(any(), any(), any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(now(), null, unpaged());
+    transactionService.findAll(user, now(), null, unpaged());
 
-    verify(repository, times(1)).findByDateInterval(now(), null, unpaged());
+    verify(repository, times(1)).findByDateInterval(user, now(), null, unpaged());
   }
 
   @Test
   void testFindAll_byUntilDate() {
-    when(repository.findByDateInterval(any(), any(), any())).thenReturn(Page.empty());
+    when(repository.findByDateInterval(any(), any(), any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(null, now(), unpaged());
+    transactionService.findAll(user, null, now(), unpaged());
 
-    verify(repository, times(1)).findByDateInterval(null, now(), unpaged());
+    verify(repository, times(1)).findByDateInterval(user, null, now(), unpaged());
   }
 
   @Test
   void testFindAll_byDateInterval() {
-    when(repository.findByDateInterval(any(), any(), any())).thenReturn(Page.empty());
+    when(repository.findByDateInterval(any(), any(), any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(now(), now(), unpaged());
+    transactionService.findAll(user, now(), now(), unpaged());
 
-    verify(repository, times(1)).findByDateInterval(now(), now(), unpaged());
+    verify(repository, times(1)).findByDateInterval(user, now(), now(), unpaged());
   }
 
   @Test
   void testFindAll() {
-    when(repository.findAll(any())).thenReturn(Page.empty());
+    when(repository.findAll(any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(null, null, unpaged());
+    transactionService.findAll(user, null, null, unpaged());
 
-    verify(repository, times(1)).findAll(unpaged());
+    verify(repository, times(1)).findAll(user, unpaged());
   }
 
   @Test
@@ -155,11 +160,11 @@ class TransactionServiceTest {
 
   @Test
   void testFindByDate() {
-    when(repository.findByDate(any(), any())).thenReturn(Page.empty());
+    when(repository.findByDate(any(), any(), any())).thenReturn(Page.empty());
 
-    final var page = transactionService.findByDate(now(), unpaged());
+    final var page = transactionService.findByDate(user, now(), unpaged());
 
-    verify(repository, times(1)).findByDate(now(), unpaged());
+    verify(repository, times(1)).findByDate(user, now(), unpaged());
     assertThat(page.isEmpty()).isTrue();
   }
 }

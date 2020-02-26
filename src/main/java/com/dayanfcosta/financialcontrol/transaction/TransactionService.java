@@ -1,8 +1,8 @@
 package com.dayanfcosta.financialcontrol.transaction;
 
 import com.dayanfcosta.financialcontrol.user.User;
-import com.dayanfcosta.financialcontrol.user.UserService;
 import java.time.LocalDate;
+import org.apache.commons.lang3.Validate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,43 +10,41 @@ import org.springframework.stereotype.Service;
 @Service
 class TransactionService {
 
-  private final UserService userService;
   private final TransactionTagService tagService;
   private final TransactionRepository repository;
 
-  TransactionService(final TransactionRepository repository, final UserService userService, final TransactionTagService tagService) {
+  TransactionService(final TransactionRepository repository, final TransactionTagService tagService) {
     this.repository = repository;
     this.tagService = tagService;
-    this.userService = userService;
   }
 
-  Transaction save(final TransactionDto dto) {
-    final var owner = userService.findById(dto.getOwnerId());
+  Transaction save(final TransactionDto dto, final User owner) {
     final var transaction = createTransaction(dto, owner);
     return repository.save(transaction);
   }
 
-  void update(final String id, final TransactionDto dto) {
+  void update(final String id, final TransactionDto dto, final User owner) {
     final var transaction = findById(id);
-    final var owner = userService.findById(dto.getOwnerId());
     final var updatedTransaction = updateTransaction(transaction, dto, owner);
     repository.save(updatedTransaction);
   }
 
-  void remove(final String id) {
+  void remove(final String id, final User owner) {
     final var transaction = findById(id);
+    final var userCanRemove = transaction.getOwner().equals(owner);
+    Validate.isTrue(userCanRemove, "You are not the owner of this transaction");
     repository.remove(transaction);
   }
 
-  Page<Transaction> findAll(final LocalDate startInterval, final LocalDate endInterval, final Pageable pageable) {
+  Page<Transaction> findAll(final User owner, final LocalDate startInterval, final LocalDate endInterval, final Pageable pageable) {
     if (startInterval != null || endInterval != null) {
-      return findByInterval(startInterval, endInterval, pageable);
+      return findByInterval(owner, startInterval, endInterval, pageable);
     }
-    return repository.findAll(pageable);
+    return repository.findAll(owner, pageable);
   }
 
-  Page<Transaction> findByDate(final LocalDate date, final Pageable pageable) {
-    return repository.findByDate(date, pageable);
+  Page<Transaction> findByDate(final User owner, final LocalDate date, final Pageable pageable) {
+    return repository.findByDate(owner, date, pageable);
   }
 
   Transaction findById(final String id) {
@@ -68,8 +66,9 @@ class TransactionService {
     return builder.build();
   }
 
-  private Page<Transaction> findByInterval(final LocalDate startInterval, final LocalDate endInterval, final Pageable pageable) {
-    return repository.findByDateInterval(startInterval, endInterval, pageable);
+  private Page<Transaction> findByInterval(final User owner, final LocalDate startInterval, final LocalDate endInterval,
+      final Pageable pageable) {
+    return repository.findByDateInterval(owner, startInterval, endInterval, pageable);
   }
 
 }

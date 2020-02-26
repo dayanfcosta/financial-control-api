@@ -40,14 +40,14 @@ class TransactionRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void testFindByDate() {
-    final var page = transactionRepository.findByDate(now(), unpaged());
+    final var page = transactionRepository.findByDate(user, now(), unpaged());
 
     assertThat(page.getTotalElements()).isEqualTo(1L);
   }
 
   @Test
   void testFindByDateInterval() {
-    final var page = transactionRepository.findByDateInterval(now(), now().plusDays(1L), unpaged());
+    final var page = transactionRepository.findByDateInterval(user, now(), now().plusDays(1L), unpaged());
 
     assertThat(page.getTotalElements()).isEqualTo(2L);
   }

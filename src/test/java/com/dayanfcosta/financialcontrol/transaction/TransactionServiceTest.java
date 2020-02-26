@@ -91,7 +91,7 @@ class TransactionServiceTest {
   }
 
   @Test
-  void testRemove_differentOwner() {
+  void testRemove_DifferentOwner() {
     when(repository.findById(any())).thenReturn(of(transaction));
 
     final var newUser = UserBuilder.create("user@user.com")

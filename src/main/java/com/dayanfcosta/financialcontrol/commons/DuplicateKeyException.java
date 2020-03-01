@@ -5,10 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation is responsible for customize message for {@link com.mongodb.DuplicateKeyException}
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface DuplicateKeyException {
 
-  String message() default "";
+  String value() default "";
 
 }

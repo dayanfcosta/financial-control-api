@@ -19,7 +19,7 @@ public class DuplicatedKeyAspect {
     } catch (final DataIntegrityViolationException ex) {
       final var signature = (MethodSignature) joinPoint.getSignature();
       final var method = signature.getMethod();
-      final var message = method.getAnnotation(DuplicateKeyException.class).message();
+      final var message = method.getAnnotation(DuplicateKeyException.class).value();
       throw new DataIntegrityViolationException(message);
     }
   }

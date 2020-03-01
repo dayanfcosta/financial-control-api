@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-class TransactionService {
+public class TransactionService {
 
   private final TransactionTagService tagService;
   private final TransactionRepository repository;
@@ -16,6 +16,10 @@ class TransactionService {
   TransactionService(final TransactionRepository repository, final TransactionTagService tagService) {
     this.repository = repository;
     this.tagService = tagService;
+  }
+
+  public Transaction findById(final String id) {
+    return repository.findById(id).orElseThrow(() -> new NullPointerException("Transaction not found"));
   }
 
   Transaction save(final TransactionDto dto, final User owner) {
@@ -45,10 +49,6 @@ class TransactionService {
 
   Page<Transaction> findByDate(final User owner, final LocalDate date, final Pageable pageable) {
     return repository.findByDate(owner, date, pageable);
-  }
-
-  Transaction findById(final String id) {
-    return repository.findById(id).orElseThrow(() -> new NullPointerException("Transaction not found"));
   }
 
   private Transaction createTransaction(final TransactionDto dto, final User owner) {

@@ -21,7 +21,15 @@ public class UserService {
     this.repository = repository;
   }
 
-  @DuplicateKeyException(message = "User e-mail is already in use")
+  public User findById(final String id) {
+    return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
+  }
+
+  public User findByEmail(final String email) {
+    return repository.findByEmail(email).orElseThrow(() -> new NullPointerException("User not found"));
+  }
+
+  @DuplicateKeyException("User e-mail is already in use")
   User save(final UserDto dto) {
     final var user = UserBuilder.create(dto.getEmail())
         .withName(dto.getName())
@@ -35,15 +43,6 @@ public class UserService {
     validateUpdate(user, dto);
     final var updated = updatedUser(user, dto);
     repository.save(updated);
-  }
-
-  public User findById(final String id) {
-    return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
-  }
-
-  public User findByEmail(final String email) {
-    return repository.findByEmail(email)
-        .orElseThrow(() -> new NullPointerException("User not found"));
   }
 
   Page<User> findAll(final Pageable pageable) {

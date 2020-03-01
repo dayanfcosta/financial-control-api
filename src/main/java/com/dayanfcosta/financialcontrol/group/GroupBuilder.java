@@ -34,7 +34,7 @@ public class GroupBuilder {
     return this;
   }
 
-  GroupBuilder withTransaction(final Set<Transaction> transactions) {
+  GroupBuilder withTransactions(final Set<Transaction> transactions) {
     this.transactions = transactions;
     return this;
   }

@@ -1,12 +1,14 @@
 package com.dayanfcosta.financialcontrol.group;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.dayanfcosta.financialcontrol.AbstractRepositoryTest;
 import com.dayanfcosta.financialcontrol.user.User;
 import com.dayanfcosta.financialcontrol.user.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 
 class GroupRepositoryTest extends AbstractRepositoryTest {
@@ -57,5 +59,13 @@ class GroupRepositoryTest extends AbstractRepositoryTest {
     final var page = repository.findByUser(user, Pageable.unpaged());
 
     assertThat(page.getContent()).hasSize(1);
+  }
+
+  @Test
+  void testSave_Duplicated() {
+    final var newGroup = GroupBuilder.create(owner, "group1").build();
+
+    assertThatThrownBy(() -> repository.save(newGroup))
+        .isInstanceOf(DuplicateKeyException.class);
   }
 }

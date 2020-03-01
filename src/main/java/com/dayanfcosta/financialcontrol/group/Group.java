@@ -9,11 +9,13 @@ import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("groups")
+@CompoundIndex(name = "uk_groups", def = "{'name' : 1, 'owner' : 1}", unique = true)
 public class Group extends AbstractDocument {
 
   private final String name;

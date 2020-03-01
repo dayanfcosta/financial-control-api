@@ -3,6 +3,7 @@ package com.dayanfcosta.financialcontrol.group;
 import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
 import com.dayanfcosta.financialcontrol.transaction.Transaction;
 import com.dayanfcosta.financialcontrol.user.User;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -95,5 +96,16 @@ public class Group extends AbstractDocument {
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), name, owner);
+  }
+
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("name", name)
+        .add("owner", owner)
+        .add("creationDate", creationDate)
+        .add("id", getId())
+        .toString();
   }
 }

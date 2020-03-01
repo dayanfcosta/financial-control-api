@@ -1,6 +1,7 @@
 package com.dayanfcosta.financialcontrol.user;
 
 import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
+import com.google.common.base.MoreObjects;
 import org.apache.commons.lang3.Validate;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -76,12 +77,12 @@ public class User extends AbstractDocument {
 
   @Override
   public String toString() {
-    final StringBuilder builder = new StringBuilder("User{");
-    builder.append("name='").append(name).append('\'');
-    builder.append(", enabled=").append(enabled);
-    builder.append(", email='").append(email).append('\'');
-    builder.append('}');
-    return builder.toString();
+    return MoreObjects.toStringHelper(this)
+        .add("name", name)
+        .add("enabled", enabled)
+        .add("email", email)
+        .add("profile", profile)
+        .add("id", getId())
+        .toString();
   }
-
 }

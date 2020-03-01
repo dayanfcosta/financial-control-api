@@ -2,6 +2,7 @@ package com.dayanfcosta.financialcontrol.transaction;
 
 import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
 import com.dayanfcosta.financialcontrol.user.User;
+import com.google.common.base.MoreObjects;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -60,5 +61,19 @@ public class Transaction extends AbstractDocument {
 
   public User getOwner() {
     return owner;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("date", date)
+        .add("description", description)
+        .add("currency", currency)
+        .add("amount", amount)
+        .add("tag", tag)
+        .add("type", type)
+        .add("owner", owner)
+        .add("id", getId())
+        .toString();
   }
 }

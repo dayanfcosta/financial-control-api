@@ -1,6 +1,7 @@
 package com.dayanfcosta.financialcontrol.transaction;
 
 import com.dayanfcosta.financialcontrol.commons.AbstractDocument;
+import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import org.apache.commons.lang3.Validate;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -46,9 +47,9 @@ public class TransactionTag extends AbstractDocument {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("TransactionTag{");
-    sb.append("description='").append(description).append('\'');
-    sb.append('}');
-    return sb.toString();
+    return MoreObjects.toStringHelper(this)
+        .add("description", description)
+        .add("id", getId())
+        .toString();
   }
 }

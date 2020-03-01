@@ -69,7 +69,7 @@ class GroupBuilderTest {
   @Test
   void testBuild_GroupWithTransactions() {
     final var group = GroupBuilder.create(owner, "group 1")
-        .withTransaction(Set.of(transaction))
+        .withTransactions(Set.of(transaction))
         .build();
 
     assertThat(group.getTransactions()).isNotNull();

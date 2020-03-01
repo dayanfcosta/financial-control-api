@@ -26,7 +26,7 @@ public class TransactionResource {
   }
 
   @PostMapping
-  public ResponseEntity<TransactionDto> addTransaction(final Authentication authentication, @RequestBody final TransactionDto dto)
+  public ResponseEntity<TransactionDto> addTransaction(@RequestBody final TransactionDto dto, final Authentication authentication)
       throws URISyntaxException {
     final var transaction = transactionService.save(dto, (User) authentication.getPrincipal());
     final var resourceUri = ResourceUtils.uri("/transactions", transaction);
@@ -36,8 +36,8 @@ public class TransactionResource {
   }
 
   @PutMapping("/{id}")
-  public void updateTransaction(final Authentication authentication, @RequestParam("id") final String id,
-      @RequestBody final TransactionDto dto) {
+  public void updateTransaction(@RequestParam("id") final String id, @RequestBody final TransactionDto dto,
+      final Authentication authentication) {
     transactionService.update(id, dto, (User) authentication.getPrincipal());
   }
 

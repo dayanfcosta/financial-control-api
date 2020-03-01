@@ -81,6 +81,10 @@ public class Group extends AbstractDocument {
     users.remove(user);
   }
 
+  public final boolean isOwner(final User user) {
+    return owner.equals(user);
+  }
+
   @Override
   public boolean equals(final Object o) {
     if (this == o) {
@@ -97,7 +101,6 @@ public class Group extends AbstractDocument {
   public int hashCode() {
     return Objects.hash(super.hashCode(), name, owner);
   }
-
 
   @Override
   public String toString() {

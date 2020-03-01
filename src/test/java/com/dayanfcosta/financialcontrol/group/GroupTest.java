@@ -30,7 +30,7 @@ class GroupTest {
     user = UserBuilder.create("xptoa@xpto.com").withName("xptoa").withPassword("xptoa").build();
     transaction = TransactionBuilder.create(owner, now(), EUR, ONE, INCOME).withId("1").build();
     group = GroupBuilder.create(owner, "group 1")
-        .withTransaction(new HashSet<>(asList(transaction)))
+        .withTransactions(new HashSet<>(asList(transaction)))
         .withUsers(new HashSet<>(asList(user)))
         .build();
   }

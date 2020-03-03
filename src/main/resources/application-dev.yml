@@ -12,9 +12,21 @@ spring:
       authentication-database: admin
   main:
     banner-mode: off
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+      cache-null-values: false
+      host: 192.168.99.100
+      port: 6379
 server:
   port: 8888
 logging:
+  pattern:
+    console: '%d{HH:mm:ss.SSS} %-5level %logger{35} - %msg%n'
   level:
     root: INFO
-    org.springframework.data.mongodb: DEBUG
+    redis.clients: TRACE
+    org.springframework.data: DEBUG
+    org.springframework.cache: DEBUG
+    com.dayanfcosta.financialcontrol: DEBUG

@@ -3,8 +3,6 @@ package com.dayanfcosta.financialcontrol.commons;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
-import java.util.Optional;
-
 /**
  * Base document
  *
@@ -15,8 +13,11 @@ public abstract class AbstractDocument {
   @Id
   private String id;
 
+  protected AbstractDocument() {
+  }
+
   @PersistenceConstructor
-  public AbstractDocument(String id) {
+  public AbstractDocument(final String id) {
     this.id = id;
   }
 
@@ -25,10 +26,14 @@ public abstract class AbstractDocument {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    AbstractDocument that = (AbstractDocument) o;
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final AbstractDocument that = (AbstractDocument) o;
     return id.equals(that.id);
   }
 

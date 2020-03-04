@@ -13,12 +13,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(value = "users")
 public class User extends AbstractDocument {
 
-  private final String name;
+  private String name;
   private boolean enabled;
   @Indexed(unique = true, name = "uk_user")
-  private final String email;
-  private final String password;
-  private final UserProfile profile;
+  private String email;
+  private String password;
+  private UserProfile profile;
+
+  private User() {
+    super();
+  }
 
   @PersistenceConstructor
   User(final String id, final String name, final String email, final String password, final boolean enabled, final UserProfile profile) {

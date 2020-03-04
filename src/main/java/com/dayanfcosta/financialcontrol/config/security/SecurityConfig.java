@@ -32,7 +32,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private AuthenticationFailureHandler failureHandler;
 
-
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
     final var config = jwtConfig;

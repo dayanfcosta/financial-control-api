@@ -2,6 +2,8 @@ package com.dayanfcosta.financialcontrol.user;
 
 import com.dayanfcosta.financialcontrol.commons.DuplicateKeyException;
 import org.apache.commons.lang3.Validate;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,23 +23,27 @@ public class UserService {
     this.repository = repository;
   }
 
+  @Cacheable(value = "users")
   public User findById(final String id) {
     return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
   }
 
+  @Cacheable(value = "users")
   public User findByEmail(final String email) {
     return repository.findByEmail(email).orElseThrow(() -> new NullPointerException("User not found"));
   }
 
   @DuplicateKeyException("User e-mail is already in use")
   User save(final UserDto dto) {
+    final var encodedPassword = passwordEncoder.encode(dto.getPassword());
     final var user = UserBuilder.create(dto.getEmail())
+        .withPassword(encodedPassword)
         .withName(dto.getName())
-        .withPassword(passwordEncoder.encode(dto.getPassword()))
         .build();
     return repository.save(user);
   }
 
+  @CacheEvict(value = "users")
   void update(final String id, final UserDto dto) {
     final var user = findById(id);
     validateUpdate(user, dto);
@@ -49,6 +55,7 @@ public class UserService {
     return repository.findAll(pageable);
   }
 
+  @CacheEvict(value = "users")
   User enable(final String id) {
     final User user = findById(id);
     Validate.isTrue(!user.isEnabled(), "User already enabled");
@@ -57,6 +64,7 @@ public class UserService {
     return user;
   }
 
+  @CacheEvict(value = "users")
   User disable(final String id) {
     final User user = findById(id);
     Validate.isTrue(user.isEnabled(), "User already disabled");

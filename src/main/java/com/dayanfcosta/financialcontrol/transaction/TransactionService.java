@@ -27,10 +27,10 @@ public class TransactionService {
     return repository.save(transaction);
   }
 
-  void update(final String id, final TransactionDto dto, final User owner) {
+  Transaction update(final String id, final TransactionDto dto, final User owner) {
     final var transaction = findById(id);
     final var updatedTransaction = updateTransaction(transaction, dto, owner);
-    repository.save(updatedTransaction);
+    return repository.save(updatedTransaction);
   }
 
   void remove(final String id, final User owner) {

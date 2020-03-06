@@ -3,7 +3,8 @@ package com.dayanfcosta.financialcontrol.user;
 import com.dayanfcosta.financialcontrol.commons.DuplicateKeyException;
 import org.apache.commons.lang3.Validate;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,12 +24,10 @@ public class UserService {
     this.repository = repository;
   }
 
-  @Cacheable(value = "users")
   public User findById(final String id) {
     return repository.findById(id).orElseThrow(() -> new NullPointerException("User not found"));
   }
 
-  @Cacheable(value = "users")
   public User findByEmail(final String email) {
     return repository.findByEmail(email).orElseThrow(() -> new NullPointerException("User not found"));
   }
@@ -43,7 +42,7 @@ public class UserService {
     return repository.save(user);
   }
 
-  @CacheEvict(value = "users")
+  @Caching(evict = {@CacheEvict(key = "#result.id"), @CacheEvict(key = "#result.email")})
   void update(final String id, final UserDto dto) {
     final var user = findById(id);
     validateUpdate(user, dto);
@@ -51,11 +50,12 @@ public class UserService {
     repository.save(updated);
   }
 
+  @Caching(put = {@CachePut(key = "#result.id"), @CachePut(key = "#result.email")})
   Page<User> findAll(final Pageable pageable) {
     return repository.findAll(pageable);
   }
 
-  @CacheEvict(value = "users")
+  @Caching(evict = {@CacheEvict(key = "#result.id"), @CacheEvict(key = "#result.email")})
   User enable(final String id) {
     final User user = findById(id);
     Validate.isTrue(!user.isEnabled(), "User already enabled");
@@ -64,7 +64,7 @@ public class UserService {
     return user;
   }
 
-  @CacheEvict(value = "users")
+  @Caching(evict = {@CacheEvict(key = "#result.id"), @CacheEvict(key = "#result.email")})
   User disable(final String id) {
     final User user = findById(id);
     Validate.isTrue(user.isEnabled(), "User already disabled");

@@ -2,6 +2,7 @@ package com.dayanfcosta.financialcontrol.transaction;
 
 import com.dayanfcosta.financialcontrol.commons.AbstractRepository;
 import java.util.Optional;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,7 +15,8 @@ class TransactionTagRepository extends AbstractRepository<TransactionTag> {
     super(template, TransactionTag.class);
   }
 
-  Optional<TransactionTag> findByDescriptionIgnoreCase(final String description) {
+  @Cacheable
+  public Optional<TransactionTag> findByDescriptionIgnoreCase(final String description) {
     final var query = new Query(Criteria.where("description").regex("^" + description + "$", "i"));
     return Optional.of(findOne(query));
   }

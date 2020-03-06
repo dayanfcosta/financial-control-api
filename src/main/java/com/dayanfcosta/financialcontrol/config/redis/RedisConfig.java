@@ -4,6 +4,7 @@ import java.time.Duration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -15,9 +16,11 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@EnableCaching
 @Configuration
+@EnableCaching
 public class RedisConfig extends CachingConfigurerSupport {
+
+  public static final String DEFAULT_CACHE_RESOLVER = "defaultCacheResolver";
 
   @Bean
   RedisTemplate<Object, Object> redisTemplate(final RedisConnectionFactory connectionFactory) {
@@ -38,6 +41,11 @@ public class RedisConfig extends CachingConfigurerSupport {
         .fromConnectionFactory(connectionFactory)
         .cacheDefaults(cacheDefaultConfiguration(jsonSerializer))
         .build();
+  }
+
+  @Bean(DEFAULT_CACHE_RESOLVER)
+  public CacheResolver cacheResolver(final CacheManager cacheManager) {
+    return new GenericCacheResolver(cacheManager);
   }
 
   private RedisCacheConfiguration cacheDefaultConfiguration(final SerializationPair<Object> jsonSerializer) {

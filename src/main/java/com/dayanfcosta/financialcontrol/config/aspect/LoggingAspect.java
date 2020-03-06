@@ -23,9 +23,12 @@ public class LoggingAspect {
     final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
     final String className = signature.getDeclaringType().getName();
     final String method = signature.getName();
-    LOGGER.debug("Executing {}.{} with following arguments: {}}", className, method, joinPoint.getArgs());
-    final Object result = joinPoint.proceed();
-    return result;
+    if (joinPoint.getArgs().length > 0) {
+      LOGGER.debug("Executing {}.{} with following arguments: {}}", className, method, joinPoint.getArgs());
+    } else {
+      LOGGER.debug("Executing {}.{}}", className, method);
+    }
+    return joinPoint.proceed();
   }
 
   @AfterThrowing(pointcut = "execution(* com.dayanfcosta..*(..))", throwing = "ex")

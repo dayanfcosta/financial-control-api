@@ -1,34 +1,23 @@
 package com.dayanfcosta.financialcontrol.commons;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.http.HttpStatus;
 
 public class HttpErrorResponse {
 
-  private final int status;
-  private final String message;
-  private final HttpErrorCode error;
+  private int status;
+  private String error;
+  private String message;
 
-  @JsonCreator
-  private HttpErrorResponse(@JsonProperty final int status, @JsonProperty final HttpErrorCode error, @JsonProperty final String message) {
-    this.message = message;
+  private HttpErrorResponse() {
+  }
+
+  public HttpErrorResponse(final int status, final String error, final String message) {
     this.status = status;
     this.error = error;
+    this.message = message;
   }
 
-  public int getStatus() {
-    return status;
-  }
-
-  public HttpErrorCode getError() {
-    return error;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public static HttpErrorResponse of(final int status, final HttpErrorCode error, final String message) {
-    return new HttpErrorResponse(status, error, message);
+  public static HttpErrorResponse of(final HttpStatus status, final String message) {
+    return new HttpErrorResponse(status.value(), status.getReasonPhrase(), message);
   }
 }

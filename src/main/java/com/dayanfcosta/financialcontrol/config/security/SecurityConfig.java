@@ -2,6 +2,7 @@ package com.dayanfcosta.financialcontrol.config.security;
 
 import com.dayanfcosta.financialcontrol.auth.TokenService;
 import com.dayanfcosta.financialcontrol.user.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private UserService userService;
   @Autowired
+  private ObjectMapper objectMapper;
+  @Autowired
   private TokenService tokenService;
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -42,10 +45,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .exceptionHandling().authenticationEntryPoint((req, resp, ex) -> resp.sendError(HttpServletResponse.SC_UNAUTHORIZED))
         .and()
         .addFilter(new AuthenticationFilter(config, tokenService, authenticationManager(), failureHandler))
-        .addFilterBefore(new JwtTokenAuthenticationFilter(config, tokenService, userService), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new JwtTokenAuthenticationFilter(config, tokenService, userService, objectMapper),
+            UsernamePasswordAuthenticationFilter.class)
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, config.getUri()).permitAll()
-        .antMatchers("/", "/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
+        .antMatchers("/", "/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
         .anyRequest().authenticated();
   }
 

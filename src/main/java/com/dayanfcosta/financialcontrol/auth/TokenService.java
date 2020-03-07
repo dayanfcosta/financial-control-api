@@ -11,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -35,12 +36,11 @@ public class TokenService {
   }
 
   public boolean isValidToken(final String token) {
-    try {
+    if (StringUtils.isNotBlank(token)) {
       getTokenBody(token);
       return true;
-    } catch (final Exception ex) {
-      return false;
     }
+    return false;
   }
 
   public String userIdFromToken(final String token) {
@@ -54,15 +54,11 @@ public class TokenService {
   }
 
   private Claims getTokenBody(final String token) {
-    try {
-      final var tokenWithoutPrefix = removeTokenPrefix(token);
-      return Jwts.parser()
-          .setSigningKey(jwtConfig.getSecret())
-          .parseClaimsJws(tokenWithoutPrefix)
-          .getBody();
-    } catch (final Exception ex) {
-      throw new RuntimeException("Invalid JWT token format: ", ex);
-    }
+    final var tokenWithoutPrefix = removeTokenPrefix(token);
+    return Jwts.parser()
+        .setSigningKey(jwtConfig.getSecret())
+        .parseClaimsJws(tokenWithoutPrefix)
+        .getBody();
   }
 
   private String token(final AuthenticatedUser authenticatedUser) {

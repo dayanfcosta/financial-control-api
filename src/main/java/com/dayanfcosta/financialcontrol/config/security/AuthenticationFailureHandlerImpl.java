@@ -1,6 +1,5 @@
 package com.dayanfcosta.financialcontrol.config.security;
 
-import com.dayanfcosta.financialcontrol.commons.HttpErrorCode;
 import com.dayanfcosta.financialcontrol.commons.HttpErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -31,11 +30,12 @@ class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
 
     if (exception instanceof BadCredentialsException) {
       objectMapper.writeValue(response.getWriter(), createErrorResponse("Bad credentials"));
+    } else {
+      objectMapper.writeValue(response.getWriter(), createErrorResponse("Invalid authentication"));
     }
-    objectMapper.writeValue(response.getWriter(), createErrorResponse("Invalid authentication"));
   }
 
-  private HttpErrorResponse createErrorResponse(final String s) {
-    return HttpErrorResponse.of(HttpStatus.UNAUTHORIZED.value(), HttpErrorCode.AUTHENTICATION, s);
+  private HttpErrorResponse createErrorResponse(final String message) {
+    return HttpErrorResponse.of(HttpStatus.UNAUTHORIZED, message);
   }
 }

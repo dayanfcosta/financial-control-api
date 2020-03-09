@@ -46,7 +46,7 @@ class UserServiceTest {
     when(passwordEncoder.encode(any())).thenReturn(new BCryptPasswordEncoder().encode(user.getPassword()));
     when(repository.findByEmail(any())).thenReturn(empty());
 
-    service.save(new UserDto(user));
+    service.save(new UserForm(user.getName(), user.getEmail(), user.getPassword()));
 
     verify(repository, times(1)).save(any());
     verify(passwordEncoder, times(1)).encode(user.getPassword());
@@ -57,7 +57,7 @@ class UserServiceTest {
     when(passwordEncoder.encode(any())).thenReturn(new BCryptPasswordEncoder().encode(user.getPassword()));
     when(repository.save(any())).thenThrow(new DuplicateKeyException("User e-mail is already in use"));
 
-    assertThatThrownBy(() -> service.save(new UserDto(user)))
+    assertThatThrownBy(() -> service.save(new UserForm(user.getName(), user.getEmail(), user.getPassword())))
         .isInstanceOf(DuplicateKeyException.class)
         .hasMessage("User e-mail is already in use");
   }

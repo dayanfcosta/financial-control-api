@@ -4,9 +4,7 @@ import com.dayanfcosta.financialcontrol.commons.ResourceUtils;
 import com.dayanfcosta.financialcontrol.user.User;
 import java.net.URISyntaxException;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,9 +29,7 @@ public class GroupResource {
 
   @GetMapping
   public Page<GroupDto> fromUser(final Authentication authentication, final Pageable pageable) {
-    final var page = service.fromUser(currentUser(authentication), pageable);
-    final var pageContent = page.getContent().stream().map(GroupDto::new).collect(Collectors.toList());
-    return new PageImpl<>(pageContent, pageable, page.getTotalElements());
+    return service.fromUser(currentUser(authentication), pageable).map(GroupDto::new);
   }
 
   @GetMapping("/{id}")

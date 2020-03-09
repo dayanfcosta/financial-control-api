@@ -1,7 +1,7 @@
 package com.dayanfcosta.financialcontrol.config.security;
 
 import com.dayanfcosta.financialcontrol.auth.TokenService;
-import com.dayanfcosta.financialcontrol.commons.HttpErrorResponse;
+import com.dayanfcosta.financialcontrol.config.rest.HttpErrorResponse;
 import com.dayanfcosta.financialcontrol.user.UserProfile;
 import com.dayanfcosta.financialcontrol.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,51 +1,45 @@
 package com.dayanfcosta.financialcontrol.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.MoreObjects;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
-/**
- * @author dayanfcosta
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserDto {
+public class UserForm {
 
-  private String id;
+  @NotBlank(message = "Invalid user name")
   private String name;
+  @NotBlank(message = "Invalid user email")
+  @Email(message = "Invalid user email")
   private String email;
-  @JsonIgnore
+  @NotBlank(message = "Invalid user password")
   private String password;
 
-  private UserDto() {
+  private UserForm() {
   }
 
-  UserDto(final User user) {
-    id = user.getId();
-    name = user.getName();
-    email = user.getEmail();
-    password = user.getPassword();
-  }
-
-  public String getId() {
-    return id;
+  public UserForm(final String name, final String email, final String password) {
+    this.name = name;
+    this.email = email;
+    this.password = password;
   }
 
   public String getName() {
     return name;
   }
 
-  String getEmail() {
+  public String getEmail() {
     return email;
   }
 
-  String getPassword() {
+  public String getPassword() {
     return password;
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("id", id)
         .add("name", name)
         .add("email", email)
         .toString();

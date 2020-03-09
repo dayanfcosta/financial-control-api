@@ -2,9 +2,6 @@ package com.dayanfcosta.financialcontrol.user;
 
 import com.dayanfcosta.financialcontrol.commons.DuplicateKeyException;
 import org.apache.commons.lang3.Validate;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,16 +30,15 @@ public class UserService {
   }
 
   @DuplicateKeyException("User e-mail is already in use")
-  User save(final UserDto dto) {
-    final var encodedPassword = passwordEncoder.encode(dto.getPassword());
-    final var user = UserBuilder.create(dto.getEmail())
+  User save(final UserForm form) {
+    final var encodedPassword = passwordEncoder.encode(form.getPassword());
+    final var user = UserBuilder.create(form.getEmail())
         .withPassword(encodedPassword)
-        .withName(dto.getName())
+        .withName(form.getName())
         .build();
     return repository.save(user);
   }
 
-  @Caching(evict = {@CacheEvict(key = "#result.id"), @CacheEvict(key = "#result.email")})
   void update(final String id, final UserDto dto) {
     final var user = findById(id);
     validateUpdate(user, dto);
@@ -50,12 +46,10 @@ public class UserService {
     repository.save(updated);
   }
 
-  @Caching(put = {@CachePut(key = "#result.id"), @CachePut(key = "#result.email")})
   Page<User> findAll(final Pageable pageable) {
     return repository.findAll(pageable);
   }
 
-  @Caching(evict = {@CacheEvict(key = "#result.id"), @CacheEvict(key = "#result.email")})
   User enable(final String id) {
     final User user = findById(id);
     Validate.isTrue(!user.isEnabled(), "User already enabled");
@@ -64,7 +58,6 @@ public class UserService {
     return user;
   }
 
-  @Caching(evict = {@CacheEvict(key = "#result.id"), @CacheEvict(key = "#result.email")})
   User disable(final String id) {
     final User user = findById(id);
     Validate.isTrue(user.isEnabled(), "User already disabled");

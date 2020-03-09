@@ -1,6 +1,6 @@
 package com.dayanfcosta.financialcontrol.config.security;
 
-import com.dayanfcosta.financialcontrol.commons.HttpErrorResponse;
+import com.dayanfcosta.financialcontrol.config.rest.HttpErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;

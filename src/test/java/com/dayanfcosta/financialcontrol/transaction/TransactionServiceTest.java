@@ -108,7 +108,7 @@ class TransactionServiceTest {
   void testFindAll_byFromDate() {
     when(repository.findByDateInterval(any(), any(), any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(user, now(), null, unpaged());
+    transactionService.findAll(now(), null, user, unpaged());
 
     verify(repository, times(1)).findByDateInterval(user, now(), null, unpaged());
   }
@@ -117,7 +117,7 @@ class TransactionServiceTest {
   void testFindAll_byUntilDate() {
     when(repository.findByDateInterval(any(), any(), any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(user, null, now(), unpaged());
+    transactionService.findAll(null, now(), user, unpaged());
 
     verify(repository, times(1)).findByDateInterval(user, null, now(), unpaged());
   }
@@ -126,7 +126,7 @@ class TransactionServiceTest {
   void testFindAll_byDateInterval() {
     when(repository.findByDateInterval(any(), any(), any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(user, now(), now(), unpaged());
+    transactionService.findAll(now(), now(), user, unpaged());
 
     verify(repository, times(1)).findByDateInterval(user, now(), now(), unpaged());
   }
@@ -135,7 +135,7 @@ class TransactionServiceTest {
   void testFindAll() {
     when(repository.findAll(any(), any())).thenReturn(Page.empty());
 
-    transactionService.findAll(user, null, null, unpaged());
+    transactionService.findAll(null, null, user, unpaged());
 
     verify(repository, times(1)).findAll(user, unpaged());
   }
@@ -162,7 +162,7 @@ class TransactionServiceTest {
   void testFindByDate() {
     when(repository.findByDate(any(), any(), any())).thenReturn(Page.empty());
 
-    final var page = transactionService.findByDate(user, now(), unpaged());
+    final var page = transactionService.findByDate(now(), user, unpaged());
 
     verify(repository, times(1)).findByDate(user, now(), unpaged());
     assertThat(page.isEmpty()).isTrue();

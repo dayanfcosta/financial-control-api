@@ -40,14 +40,14 @@ public class TransactionService {
     repository.remove(transaction);
   }
 
-  Page<Transaction> findAll(final User owner, final LocalDate startInterval, final LocalDate endInterval, final Pageable pageable) {
+  Page<Transaction> findAll(final LocalDate startInterval, final LocalDate endInterval, final User owner, final Pageable pageable) {
     if (startInterval != null || endInterval != null) {
       return findByInterval(owner, startInterval, endInterval, pageable);
     }
     return repository.findAll(owner, pageable);
   }
 
-  Page<Transaction> findByDate(final User owner, final LocalDate date, final Pageable pageable) {
+  Page<Transaction> findByDate(final LocalDate date, final User owner, final Pageable pageable) {
     return repository.findByDate(owner, date, pageable);
   }
 

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,7 +74,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void delete(@RequestParam("id") final String id, final Authentication authentication) {
+  public void delete(@PathVariable("id") final String id, final Authentication authentication) {
     service.delete(id, currentUser(authentication));
   }
 
@@ -84,7 +85,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void addUsers(@RequestParam("id") final String id, @RequestBody final Set<String> userIds, final Authentication authentication) {
+  public void addUsers(@PathVariable("id") final String id, @RequestBody final Set<String> userIds, final Authentication authentication) {
     service.addUsers(id, userIds, currentUser(authentication));
   }
 
@@ -95,7 +96,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void removeUsers(@RequestParam("id") final String id, @RequestBody final Set<String> userIds,
+  public void removeUsers(@PathVariable("id") final String id, @RequestBody final Set<String> userIds,
       final Authentication authentication) {
     service.removeUsers(id, userIds, currentUser(authentication));
   }
@@ -107,7 +108,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void addTransactions(@RequestParam("id") final String id, @RequestBody final Set<String> transactionIds,
+  public void addTransactions(@PathVariable("id") final String id, @RequestBody final Set<String> transactionIds,
       final Authentication authentication) {
     service.addTransactions(id, transactionIds, currentUser(authentication));
   }
@@ -119,7 +120,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void removeTransactions(@RequestParam("id") final String id, @RequestBody final Set<String> transactionIds,
+  public void removeTransactions(@PathVariable("id") final String id, @RequestBody final Set<String> transactionIds,
       final Authentication authentication) {
     service.removeTransactions(id, transactionIds, currentUser(authentication));
   }
@@ -131,7 +132,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void leaveGroup(@RequestParam("id") final String id, final Authentication authentication) {
+  public void leaveGroup(@PathVariable("id") final String id, final Authentication authentication) {
     service.leave(id, currentUser(authentication));
   }
 

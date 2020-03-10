@@ -1,6 +1,5 @@
 package com.dayanfcosta.financialcontrol.config.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -19,12 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class RestExceptionConfig extends ResponseEntityExceptionHandler {
-
-  private final ObjectMapper objectMapper;
-
-  public RestExceptionConfig(final ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
-  }
 
   @Operation(hidden = true)
   @ResponseStatus(HttpStatus.CONFLICT)

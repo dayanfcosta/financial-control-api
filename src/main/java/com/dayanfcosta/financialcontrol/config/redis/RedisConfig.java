@@ -12,7 +12,6 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -35,11 +34,9 @@ public class RedisConfig extends CachingConfigurerSupport {
 
   @Bean
   CacheManager redisCacheManager(final RedisConnectionFactory connectionFactory) {
-    final RedisSerializationContext.SerializationPair<Object> jsonSerializer =
-        RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer());
     return RedisCacheManager.RedisCacheManagerBuilder
         .fromConnectionFactory(connectionFactory)
-        .cacheDefaults(cacheDefaultConfiguration(jsonSerializer))
+        .cacheDefaults(cacheDefaultConfiguration())
         .build();
   }
 
@@ -48,7 +45,8 @@ public class RedisConfig extends CachingConfigurerSupport {
     return new GenericCacheResolver(cacheManager);
   }
 
-  private RedisCacheConfiguration cacheDefaultConfiguration(final SerializationPair<Object> jsonSerializer) {
+  private RedisCacheConfiguration cacheDefaultConfiguration() {
+    final var jsonSerializer = SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer());
     return RedisCacheConfiguration.defaultCacheConfig()
         .entryTtl(Duration.ofDays(1))
         .serializeValuesWith(jsonSerializer);

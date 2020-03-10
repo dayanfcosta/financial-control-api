@@ -1,6 +1,5 @@
 package com.dayanfcosta.financialcontrol.config.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -28,14 +27,13 @@ public class RestExceptionConfig extends ResponseEntityExceptionHandler {
 
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(DataIntegrityViolationException.class)
-  public HttpErrorResponse handleConflict(final DataIntegrityViolationException ex, final WebRequest request)
-      throws JsonProcessingException {
+  public HttpErrorResponse handleConflict(final DataIntegrityViolationException ex) {
     return HttpErrorResponse.of(HttpStatus.CONFLICT, ex.getMessage());
   }
 
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public HttpErrorResponse handleInternalErrors(final Exception ex, final WebRequest request) throws JsonProcessingException {
+  public HttpErrorResponse handleInternalErrors(final Exception ex) {
     return HttpErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
   }
 

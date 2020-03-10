@@ -1,6 +1,7 @@
 package com.dayanfcosta.financialcontrol.config.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class RestExceptionConfig extends ResponseEntityExceptionHandler {
     this.objectMapper = objectMapper;
   }
 
+  @Operation(hidden = true)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(DataIntegrityViolationException.class)
   public HttpErrorResponse handleConflict(final DataIntegrityViolationException ex) {

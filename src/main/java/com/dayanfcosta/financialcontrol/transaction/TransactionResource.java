@@ -4,6 +4,7 @@ import com.dayanfcosta.financialcontrol.commons.ResourceUtils;
 import com.dayanfcosta.financialcontrol.config.rest.HttpErrorResponse;
 import com.dayanfcosta.financialcontrol.user.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +45,8 @@ public class TransactionResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public ResponseEntity<TransactionDto> addTransaction(@RequestBody final TransactionForm form, final Authentication authentication)
+  public ResponseEntity<TransactionDto> addTransaction(@RequestBody final TransactionForm form,
+      @Parameter(hidden = true) final Authentication authentication)
       throws URISyntaxException {
     final var transaction = transactionService.save(form, currentUser(authentication));
     final var resourceUri = ResourceUtils.uri("/transactions", transaction);
@@ -61,7 +63,7 @@ public class TransactionResource {
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
   public void updateTransaction(@PathVariable("id") final String id, @RequestBody final TransactionForm form,
-      final Authentication authentication) {
+      @Parameter(hidden = true) final Authentication authentication) {
     transactionService.update(id, form, currentUser(authentication));
   }
 
@@ -79,13 +81,14 @@ public class TransactionResource {
 
   @GetMapping("/date")
   public Page<TransactionDto> transactionsByDate(@RequestParam("date") final LocalDate date, final Pageable pageable,
-      final Authentication authentication) {
+      @Parameter(hidden = true) final Authentication authentication) {
     return transactionService.findByDate(date, currentUser(authentication), pageable).map(TransactionDto::new);
   }
 
   @GetMapping
   public Page<TransactionDto> transactionsByInterval(@RequestParam("startDate") final LocalDate startDate,
-      @RequestParam("endDate") final LocalDate endDate, final Pageable pageable, final Authentication authentication) {
+      @RequestParam("endDate") final LocalDate endDate, final Pageable pageable,
+      @Parameter(hidden = true) final Authentication authentication) {
     return transactionService.findAll(startDate, endDate, currentUser(authentication), pageable).map(TransactionDto::new);
   }
 

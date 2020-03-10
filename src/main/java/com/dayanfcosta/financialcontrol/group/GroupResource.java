@@ -4,10 +4,13 @@ import com.dayanfcosta.financialcontrol.commons.ResourceUtils;
 import com.dayanfcosta.financialcontrol.config.rest.HttpErrorResponse;
 import com.dayanfcosta.financialcontrol.user.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URISyntaxException;
 import java.util.Set;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "Group Resources")
 @RequestMapping("/groups")
 public class GroupResource {
 
@@ -35,7 +39,16 @@ public class GroupResource {
   }
 
   @GetMapping
-  public Page<GroupDto> fromUser(final Authentication authentication, final Pageable pageable) {
+  @Operation(
+      summary = "Find all groups from the current user",
+      security = @SecurityRequirement(name = "jwt-authentication")
+  )
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "groups found"),
+      @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
+      @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
+  })
+  public Page<GroupDto> fromUser(@Parameter(hidden = true) final Authentication authentication, final Pageable pageable) {
     return service.fromUser(currentUser(authentication), pageable).map(GroupDto::new);
   }
 
@@ -60,7 +73,8 @@ public class GroupResource {
           content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public ResponseEntity<GroupDto> save(@RequestBody final GroupDto dto, final Authentication authentication) throws URISyntaxException {
+  public ResponseEntity<GroupDto> save(@RequestBody final GroupDto dto, @Parameter(hidden = true) final Authentication authentication)
+      throws URISyntaxException {
     final var group = service.save(dto, currentUser(authentication));
     return ResponseEntity
         .created(ResourceUtils.uri("/groups", group))
@@ -74,7 +88,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void delete(@PathVariable("id") final String id, final Authentication authentication) {
+  public void delete(@PathVariable("id") final String id, @Parameter(hidden = true) final Authentication authentication) {
     service.delete(id, currentUser(authentication));
   }
 
@@ -85,7 +99,8 @@ public class GroupResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void addUsers(@PathVariable("id") final String id, @RequestBody final Set<String> userIds, final Authentication authentication) {
+  public void addUsers(@PathVariable("id") final String id, @RequestBody final Set<String> userIds,
+      @Parameter(hidden = true) final Authentication authentication) {
     service.addUsers(id, userIds, currentUser(authentication));
   }
 
@@ -97,7 +112,7 @@ public class GroupResource {
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
   public void removeUsers(@PathVariable("id") final String id, @RequestBody final Set<String> userIds,
-      final Authentication authentication) {
+      @Parameter(hidden = true) final Authentication authentication) {
     service.removeUsers(id, userIds, currentUser(authentication));
   }
 

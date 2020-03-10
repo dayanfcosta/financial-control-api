@@ -50,7 +50,7 @@ class TransactionServiceTest {
   void testSave_withoutTag() {
     when(tagService.findById(any())).thenReturn(null);
 
-    transactionService.save(new TransactionDto(transaction), user);
+    transactionService.save(new TransactionForm(transaction), user);
 
     verify(repository, times(1)).save(any());
     verify(tagService, times(0)).findById(any());
@@ -64,7 +64,7 @@ class TransactionServiceTest {
         .create(user, now(), EUR, ONE, INCOME)
         .withTag(new TransactionTag("1", "xpto"))
         .build();
-    transactionService.save(new TransactionDto(transaction), user);
+    transactionService.save(new TransactionForm(transaction), user);
 
     verify(repository, times(1)).save(any());
     verify(tagService, times(1)).findById(any());
@@ -74,7 +74,7 @@ class TransactionServiceTest {
   void testUpdate() {
     when(repository.findById(any())).thenReturn(of(transaction));
 
-    transactionService.update("1", new TransactionDto(transaction), user);
+    transactionService.update("1", new TransactionForm(transaction), user);
 
     verify(repository, times(1)).save(any());
     verify(tagService, times(0)).findById(any());

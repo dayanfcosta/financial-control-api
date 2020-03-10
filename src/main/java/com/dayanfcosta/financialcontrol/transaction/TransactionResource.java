@@ -44,9 +44,9 @@ public class TransactionResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public ResponseEntity<TransactionDto> addTransaction(@RequestBody final TransactionDto dto, final Authentication authentication)
+  public ResponseEntity<TransactionDto> addTransaction(@RequestBody final TransactionForm form, final Authentication authentication)
       throws URISyntaxException {
-    final var transaction = transactionService.save(dto, currentUser(authentication));
+    final var transaction = transactionService.save(form, currentUser(authentication));
     final var resourceUri = ResourceUtils.uri("/transactions", transaction);
     return ResponseEntity
         .created(resourceUri)
@@ -60,9 +60,9 @@ public class TransactionResource {
       @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
       @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
   })
-  public void updateTransaction(@PathVariable("id") final String id, @RequestBody final TransactionDto dto,
+  public void updateTransaction(@PathVariable("id") final String id, @RequestBody final TransactionForm form,
       final Authentication authentication) {
-    transactionService.update(id, dto, currentUser(authentication));
+    transactionService.update(id, form, currentUser(authentication));
   }
 
   @GetMapping("/{id}")

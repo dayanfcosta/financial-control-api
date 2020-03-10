@@ -22,14 +22,14 @@ public class TransactionService {
     return repository.findById(id).orElseThrow(() -> new NullPointerException("Transaction not found"));
   }
 
-  Transaction save(final TransactionDto dto, final User owner) {
-    final var transaction = createTransaction(dto, owner);
+  Transaction save(final TransactionForm form, final User owner) {
+    final var transaction = createTransaction(form, owner);
     return repository.save(transaction);
   }
 
-  Transaction update(final String id, final TransactionDto dto, final User owner) {
+  Transaction update(final String id, final TransactionForm form, final User owner) {
     final var transaction = findById(id);
-    final var updatedTransaction = updateTransaction(transaction, dto, owner);
+    final var updatedTransaction = updateTransaction(transaction, form, owner);
     return repository.save(updatedTransaction);
   }
 
@@ -51,18 +51,18 @@ public class TransactionService {
     return repository.findByDate(owner, date, pageable);
   }
 
-  private Transaction createTransaction(final TransactionDto dto, final User owner) {
-    final var builder = TransactionBuilder.create(owner, dto.getDate(), dto.getCurrency(), dto.getAmount(), dto.getType())
-        .withDescription(dto.getDescription());
-    dto.getTagId().ifPresent(tagId -> builder.withTag(tagService.findById(tagId)));
+  private Transaction createTransaction(final TransactionForm form, final User owner) {
+    final var builder = TransactionBuilder.create(owner, form.getDate(), form.getCurrency(), form.getAmount(), form.getType())
+        .withDescription(form.getDescription());
+    form.getTagId().ifPresent(tagId -> builder.withTag(tagService.findById(tagId)));
     return builder.build();
   }
 
-  private Transaction updateTransaction(final Transaction transaction, final TransactionDto dto, final User owner) {
-    final var builder = TransactionBuilder.create(owner, dto.getDate(), dto.getCurrency(), dto.getAmount(), dto.getType())
-        .withDescription(dto.getDescription())
+  private Transaction updateTransaction(final Transaction transaction, final TransactionForm form, final User owner) {
+    final var builder = TransactionBuilder.create(owner, form.getDate(), form.getCurrency(), form.getAmount(), form.getType())
+        .withDescription(form.getDescription())
         .withId(transaction.getId());
-    dto.getTagId().ifPresent(tagId -> builder.withTag(tagService.findById(tagId)));
+    form.getTagId().ifPresent(tagId -> builder.withTag(tagService.findById(tagId)));
     return builder.build();
   }
 

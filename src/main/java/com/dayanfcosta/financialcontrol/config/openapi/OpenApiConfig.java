@@ -1,4 +1,4 @@
-package com.dayanfcosta.financialcontrol.config;
+package com.dayanfcosta.financialcontrol.config.openapi;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,7 +22,7 @@ public class OpenApiConfig {
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
   @Bean
-  public OpenAPI api() {
+  public OpenAPI api(@Value("${springdoc.version}") final String appVersion) {
     return new OpenAPI()
         .components(
             new Components().addSecuritySchemes("bearer", securityScheme())

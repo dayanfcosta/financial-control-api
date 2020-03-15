@@ -1,6 +1,5 @@
 package com.dayanfcosta.financialcontrol.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.MoreObjects;
 
@@ -13,8 +12,6 @@ public class UserDto {
   private String id;
   private String name;
   private String email;
-  @JsonIgnore
-  private String password;
 
   private UserDto() {
   }
@@ -23,7 +20,6 @@ public class UserDto {
     id = user.getId();
     name = user.getName();
     email = user.getEmail();
-    password = user.getPassword();
   }
 
   public String getId() {
@@ -36,10 +32,6 @@ public class UserDto {
 
   String getEmail() {
     return email;
-  }
-
-  String getPassword() {
-    return password;
   }
 
   @Override

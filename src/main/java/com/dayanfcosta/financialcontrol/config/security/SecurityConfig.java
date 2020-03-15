@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             UsernamePasswordAuthenticationFilter.class)
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, config.getUri()).permitAll()
-        .antMatchers("/", "/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
+        .antMatchers("/", "/v3/api-docs", "/v3/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
         .anyRequest().authenticated();
   }
 

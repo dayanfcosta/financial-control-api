@@ -1,8 +1,6 @@
 package com.dayanfcosta.financialcontrol.transaction;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -11,31 +9,16 @@ import java.util.Optional;
 public class TransactionDto {
 
   private String tagId;
-  private final String id;
-  private final String ownerId;
-  private final LocalDate date;
-  private final BigDecimal amount;
-  private final Currency currency;
-  private final String description;
-  private final TransactionType type;
+  private String id;
+  private String ownerId;
+  private LocalDate date;
+  private BigDecimal amount;
+  private Currency currency;
+  private String description;
+  private TransactionType type;
 
-  @JsonCreator
-  private TransactionDto(@JsonProperty("id") final String id,
-      @JsonProperty("tag") final String tagId,
-      @JsonProperty("date") final LocalDate date,
-      @JsonProperty("owner") final String ownerId,
-      @JsonProperty("amount") final BigDecimal amount,
-      @JsonProperty("currency") final Currency currency,
-      @JsonProperty("description") final String description,
-      @JsonProperty("type") final TransactionType type) {
-    this.id = id;
-    this.type = type;
-    this.date = date;
-    this.tagId = tagId;
-    this.amount = amount;
-    this.ownerId = ownerId;
-    this.currency = currency;
-    this.description = description;
+  private TransactionDto() {
+    super();
   }
 
   TransactionDto(final Transaction transaction) {

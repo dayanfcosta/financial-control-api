@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,16 +21,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class RestExceptionConfig extends ResponseEntityExceptionHandler {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestExceptionConfig.class);
+
   @Operation(hidden = true)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(DataIntegrityViolationException.class)
   public HttpErrorResponse handleConflict(final DataIntegrityViolationException ex) {
+    LOGGER.error("An conflict occurred: ", ex);
     return HttpErrorResponse.of(HttpStatus.CONFLICT, ex.getMessage());
   }
 
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public HttpErrorResponse handleInternalErrors(final Exception ex) {
+    LOGGER.error("An error occurred: ", ex);
     return HttpErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
   }
 

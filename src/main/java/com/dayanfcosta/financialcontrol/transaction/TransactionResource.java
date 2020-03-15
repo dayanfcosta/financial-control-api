@@ -1,14 +1,12 @@
 package com.dayanfcosta.financialcontrol.transaction;
 
 import com.dayanfcosta.financialcontrol.commons.ResourceUtils;
-import com.dayanfcosta.financialcontrol.config.rest.HttpErrorResponse;
+import com.dayanfcosta.financialcontrol.config.openapi.CreateApiResponse;
+import com.dayanfcosta.financialcontrol.config.openapi.PageableParameter;
+import com.dayanfcosta.financialcontrol.config.openapi.QueryApiResponse;
+import com.dayanfcosta.financialcontrol.config.openapi.UpdateApiResponse;
 import com.dayanfcosta.financialcontrol.user.User;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -25,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Transactions Resources")
 @RestController
 @RequestMapping("/transactions")
+@Tag(name = "Transactions Resources")
 public class TransactionResource {
 
   private final TransactionTagService tagService;
@@ -39,15 +37,9 @@ public class TransactionResource {
   }
 
   @PostMapping
-  @Operation(summary = "Register a new transaction")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "transaction created", content = @Content(schema = @Schema(implementation = TransactionDto.class))),
-      @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
-      @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
-  })
+  @CreateApiResponse(summary = "Register a new transaction")
   public ResponseEntity<TransactionDto> addTransaction(@RequestBody final TransactionForm form,
-      @Parameter(hidden = true) final Authentication authentication)
-      throws URISyntaxException {
+      @Parameter(hidden = true) final Authentication authentication) throws URISyntaxException {
     final var transaction = transactionService.save(form, currentUser(authentication));
     final var resourceUri = ResourceUtils.uri("/transactions", transaction);
     return ResponseEntity
@@ -56,38 +48,30 @@ public class TransactionResource {
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Update the transaction with the given ID")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "transaction updated"),
-      @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
-      @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
-  })
+  @UpdateApiResponse(summary = "Update the transaction with the given ID")
   public void updateTransaction(@PathVariable("id") final String id, @RequestBody final TransactionForm form,
       @Parameter(hidden = true) final Authentication authentication) {
     transactionService.update(id, form, currentUser(authentication));
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Find a transaction with the given ID")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "transaction found", content = @Content(schema = @Schema(implementation = TransactionDto.class))),
-      @ApiResponse(responseCode = "401", description = "not authenticated request", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class))),
-      @ApiResponse(responseCode = "500", description = "internal server error", content = @Content(schema = @Schema(implementation = HttpErrorResponse.class)))
-  })
+  @QueryApiResponse(summary = "Find a transaction with the given ID")
   public TransactionDto transactionById(@PathVariable("id") final String id) {
     final var transaction = transactionService.findById(id);
     return new TransactionDto(transaction);
   }
 
   @GetMapping("/date")
-  public Page<TransactionDto> transactionsByDate(@RequestParam("date") final LocalDate date, final Pageable pageable,
-      @Parameter(hidden = true) final Authentication authentication) {
+  @PageableParameter(summary = "Find all transactions from the current user with the given date")
+  public Page<TransactionDto> transactionsByDate(@RequestParam("date") final LocalDate date,
+      @Parameter(hidden = true) final Pageable pageable, @Parameter(hidden = true) final Authentication authentication) {
     return transactionService.findByDate(date, currentUser(authentication), pageable).map(TransactionDto::new);
   }
 
   @GetMapping
+  @PageableParameter(summary = "Find all transactions from the current user with the given date interval")
   public Page<TransactionDto> transactionsByInterval(@RequestParam("startDate") final LocalDate startDate,
-      @RequestParam("endDate") final LocalDate endDate, final Pageable pageable,
+      @RequestParam("endDate") final LocalDate endDate, @Parameter(hidden = true) final Pageable pageable,
       @Parameter(hidden = true) final Authentication authentication) {
     return transactionService.findAll(startDate, endDate, currentUser(authentication), pageable).map(TransactionDto::new);
   }

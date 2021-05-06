@@ -16,5 +16,21 @@ services:
       - "6379:6379"
     networks:
       - transaction-api
+  api:
+    image: adoptopenjdk/openjdk11:jdk11u-alpine-nightly-slim
+    container_name: api_server
+    volumes:
+      - ${PWD}/artifact:/user/share/api-jar
+    command: >
+      sh -c "java -jar /user/share/api-jar/api.jar"
+    ports:
+      - 8888:8888
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - transaction-api
+
 networks:
   transaction-api:
+    driver: bridge
